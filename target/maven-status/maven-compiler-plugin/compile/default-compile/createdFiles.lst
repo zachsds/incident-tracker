@@ -25,6 +25,7 @@ com/sdsweather/repository/AuthRepository.class
 com/sdsweather/services/EmailService$1.class
 com/sdsweather/model/Incident.class
 com/sdsweather/ui/IncidentHistoryPage.class
+com/sdsweather/ui/AppStyles.class
 com/sdsweather/navigation/Navigator.class
 com/sdsweather/ui/AnalyticsPage.class
 com/sdsweather/ui/LoginPage.class

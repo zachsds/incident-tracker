@@ -8,49 +8,166 @@ import com.sdsweather.repository.IncidentComponentRepository;
 import com.sdsweather.repository.ComponentRepository;
 import com.sdsweather.repository.UnitRepository;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
 import javafx.beans.property.SimpleStringProperty;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+/**
+ * IncidentHistoryPage - Comprehensive incident management and viewing interface.
+ * 
+ * Displays all incidents across all units in a sortable, filterable table view.
+ * Provides multi-select capabilities for bulk operations and real-time filtering
+ * by severity, unit, and search terms.
+ * 
+ * Features:
+ * - Unified view of all incidents across the system
+ * - Multi-dimensional filtering (search, severity, unit)
+ * - Bulk delete operations with multi-select mode
+ * - Real-time statistics display
+ * - Color-coded severity indicators
+ * - Component association display
+ * 
+ * @author SDS Weather Development Team
+ * @version 1.0
+ * @since 2026-02-16
+ */
 public class IncidentHistoryPage extends VBox {
 
+    private TableView<Incident> incidentTable;
+    private List<Incident> allIncidents;
+    private Map<String, String> unitMap;
+    private TextField searchField;
+    private ComboBox<String> severityFilter;
+    private ComboBox<String> unitFilter;
+    private Label statsLabel;
+    private ToggleButton multiSelectBtn;
+
+    /**
+     * Constructs the Incident History page with filtering and management features.
+     */
     public IncidentHistoryPage() {
 
-        setPadding(new Insets(20));
-        setSpacing(10);
+        setStyle(AppStyles.PAGE_BACKGROUND);
+        setPadding(new Insets(30));
+        setSpacing(20);
 
-        Label title = new Label("Incident History - All Units");
-        title.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+        // Initialize data structures
+        allIncidents = new ArrayList<>();
+        unitMap = new HashMap<>();
 
-        // Create unit ID to unit info mapping
-        Map<String, String> unitMap = new HashMap<>();
+        // ===== HEADER =====
+        HBox header = createHeader();
+
+        // ===== FILTER BAR =====
+        HBox filterBar = createFilterBar();
+
+        // ===== STATS BAR =====
+        statsLabel = new Label("Loading...");
+        statsLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: " + AppStyles.LIGHT_TEXT + ";");
+
+        // ===== INCIDENT TABLE =====
+        VBox tableContainer = createTableContainer();
+
+        // ===== ACTION BAR =====
+        HBox actionBar = createActionBar();
+
+        // ===== BACK BUTTON =====
+        Button back = new Button("← Back");
+        AppStyles.styleSecondaryButton(back);
+        back.setOnAction(e -> Navigator.show(new AnalysisPage()));
+
+        getChildren().addAll(header, filterBar, statsLabel, tableContainer, actionBar, back);
+
+        // Load data
+        loadAllIncidents();
+    }
+
+    /**
+     * Creates the page header with logo and title.
+     * 
+     * @return HBox containing header elements
+     */
+    private HBox createHeader() {
+        HBox header = new HBox(15);
+        header.setAlignment(Pos.CENTER_LEFT);
+
         try {
-            List<Unit> allUnits = UnitRepository.getAll();
-            for (Unit unit : allUnits) {
-                String display = unit.unitType.equals("STOCK") 
-                    ? "STOCK-" + unit.stockNumber 
-                    : unit.title;
-                unitMap.put(unit.unitId, display);
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            Image logo = new Image(getClass().getResourceAsStream("/logosmall.png"));
+            ImageView logoView = new ImageView(logo);
+            logoView.setFitHeight(35);
+            logoView.setPreserveRatio(true);
+            header.getChildren().add(logoView);
+        } catch (Exception e) {
+            System.out.println("Small logo not found");
         }
 
-        // Create TableView
-        TableView<Incident> incidentTable = new TableView<>();
-        incidentTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        Label title = new Label("Incident History");
+        title.setStyle(AppStyles.PAGE_TITLE);
 
-        // Checkbox column for selection
+        header.getChildren().add(title);
+        return header;
+    }
+
+    /**
+     * Creates the filter control bar with search and dropdown filters.
+     * 
+     * @return HBox containing filter controls
+     */
+    private HBox createFilterBar() {
+        HBox filterBar = new HBox(15);
+        filterBar.setAlignment(Pos.CENTER_LEFT);
+
+        // Search field
+        searchField = new TextField();
+        searchField.setPromptText("🔍 Search incidents...");
+        searchField.setPrefWidth(300);
+        AppStyles.styleTextField(searchField);
+        searchField.textProperty().addListener((obs, old, newVal) -> applyFilters());
+
+        // Severity filter
+        severityFilter = new ComboBox<>();
+        severityFilter.getItems().addAll("All Severities", "HIGH", "MEDIUM", "LOW");
+        severityFilter.setValue("All Severities");
+        severityFilter.setStyle(AppStyles.TEXT_FIELD);
+        severityFilter.setOnAction(e -> applyFilters());
+
+        // Unit filter
+        unitFilter = new ComboBox<>();
+        unitFilter.getItems().add("All Units");
+        unitFilter.setValue("All Units");
+        unitFilter.setStyle(AppStyles.TEXT_FIELD);
+        unitFilter.setOnAction(e -> applyFilters());
+
+        filterBar.getChildren().addAll(searchField, severityFilter, unitFilter);
+        return filterBar;
+    }
+
+    /**
+     * Creates the main incident table with sortable columns.
+     * 
+     * @return VBox containing the table
+     */
+    private VBox createTableContainer() {
+        VBox container = new VBox(10);
+        VBox.setVgrow(container, Priority.ALWAYS);
+
+        incidentTable = new TableView<>();
+        incidentTable.setStyle("-fx-background-color: white; -fx-background-radius: 10;");
+        VBox.setVgrow(incidentTable, Priority.ALWAYS);
+        incidentTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        // Checkbox column (hidden by default)
         TableColumn<Incident, Boolean> selectCol = new TableColumn<>("");
-        selectCol.setPrefWidth(40);
-        selectCol.setVisible(false); // Hidden by default
+        selectCol.setPrefWidth(50);
+        selectCol.setVisible(false);
         selectCol.setCellFactory(col -> new TableCell<Incident, Boolean>() {
             private final CheckBox checkBox = new CheckBox();
 
@@ -74,7 +191,7 @@ public class IncidentHistoryPage extends VBox {
                     setGraphic(null);
                 } else {
                     Incident incident = getTableRow().getItem();
-                    checkBox.setSelected(incident != null && 
+                    checkBox.setSelected(incident != null &&
                         incidentTable.getSelectionModel().getSelectedItems().contains(incident));
                     setGraphic(checkBox);
                 }
@@ -86,7 +203,7 @@ public class IncidentHistoryPage extends VBox {
         unitCol.setCellValueFactory(data -> new SimpleStringProperty(
             unitMap.getOrDefault(data.getValue().unitId, "Unknown")
         ));
-        unitCol.setPrefWidth(120);
+        unitCol.setPrefWidth(150);
 
         // Date column
         TableColumn<Incident, String> dateCol = new TableColumn<>("Date");
@@ -95,11 +212,10 @@ public class IncidentHistoryPage extends VBox {
         ));
         dateCol.setPrefWidth(100);
 
-        // Severity column
+        // Severity column with color coding
         TableColumn<Incident, String> severityCol = new TableColumn<>("Severity");
         severityCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().severity));
-        severityCol.setPrefWidth(80);
-        
+        severityCol.setPrefWidth(100);
         severityCol.setCellFactory(col -> new TableCell<Incident, String>() {
             @Override
             protected void updateItem(String item, boolean empty) {
@@ -110,9 +226,9 @@ public class IncidentHistoryPage extends VBox {
                 } else {
                     setText(item);
                     switch (item) {
-                        case "HIGH" -> setTextFill(Color.RED);
-                        case "MEDIUM" -> setTextFill(Color.ORANGE);
-                        default -> setTextFill(Color.BLACK);
+                        case "HIGH" -> setTextFill(Color.web(AppStyles.DANGER_COLOR));
+                        case "MEDIUM" -> setTextFill(Color.web(AppStyles.WARNING_COLOR));
+                        default -> setTextFill(Color.web(AppStyles.DARK_TEXT));
                     }
                 }
             }
@@ -121,7 +237,7 @@ public class IncidentHistoryPage extends VBox {
         // Summary column
         TableColumn<Incident, String> summaryCol = new TableColumn<>("Summary");
         summaryCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().summary));
-        summaryCol.setPrefWidth(250);
+        summaryCol.setPrefWidth(300);
 
         // Components column
         TableColumn<Incident, String> componentsCol = new TableColumn<>("Components");
@@ -143,16 +259,41 @@ public class IncidentHistoryPage extends VBox {
                 return new SimpleStringProperty("");
             }
         });
-        componentsCol.setPrefWidth(200);
+        componentsCol.setPrefWidth(250);
 
         incidentTable.getColumns().addAll(selectCol, unitCol, dateCol, severityCol, summaryCol, componentsCol);
 
-        // Enable multiple selection
-        incidentTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        // Store selectCol reference
+        incidentTable.getProperties().put("selectCol", selectCol);
 
-        // Multi-select toggle button
-        ToggleButton multiSelectBtn = new ToggleButton("Multi-Select");
+        container.getChildren().add(incidentTable);
+        return container;
+    }
+
+    /**
+     * Creates the action button bar.
+     * 
+     * @return HBox containing action buttons
+     */
+    private HBox createActionBar() {
+        HBox actionBar = new HBox(10);
+        actionBar.setAlignment(Pos.CENTER_LEFT);
+
+        // Multi-select toggle
+        multiSelectBtn = new ToggleButton("Multi-Select");
+        multiSelectBtn.setStyle(
+            "-fx-background-color: transparent; " +
+            "-fx-text-fill: " + AppStyles.PRIMARY_COLOR + "; " +
+            "-fx-font-size: 14px; " +
+            "-fx-padding: 10 20; " +
+            "-fx-border-color: " + AppStyles.PRIMARY_COLOR + "; " +
+            "-fx-border-width: 2; " +
+            "-fx-border-radius: 5; " +
+            "-fx-background-radius: 5; " +
+            "-fx-cursor: hand;"
+        );
         multiSelectBtn.setOnAction(e -> {
+            TableColumn<Incident, ?> selectCol = (TableColumn<Incident, ?>) incidentTable.getProperties().get("selectCol");
             boolean multiSelectMode = multiSelectBtn.isSelected();
             selectCol.setVisible(multiSelectMode);
             if (!multiSelectMode) {
@@ -160,185 +301,156 @@ public class IncidentHistoryPage extends VBox {
             }
         });
 
-        // Search/Filter controls
-        TextField searchField = new TextField();
-        searchField.setPromptText("Search incidents...");
-        searchField.setPrefWidth(200);
-
-        ComboBox<String> severityFilter = new ComboBox<>();
-        severityFilter.getItems().addAll("All Severities", "HIGH", "MEDIUM", "LOW");
-        severityFilter.setValue("All Severities");
-
-        ComboBox<String> unitFilter = new ComboBox<>();
-        unitFilter.getItems().add("All Units");
-        unitFilter.getItems().addAll(unitMap.values());
-        unitFilter.setValue("All Units");
-
-        HBox filterBox = new HBox(10, searchField, severityFilter, unitFilter);
-
-        // Load all incidents from all units
-        List<Incident> allIncidents = new ArrayList<>();
-        Runnable loadAllIncidents = () -> {
-            allIncidents.clear();
-            try {
-                List<Unit> allUnits = UnitRepository.getAll();
-                for (Unit unit : allUnits) {
-                    List<Incident> unitIncidents = IncidentRepository.getByUnit(unit.unitId);
-                    allIncidents.addAll(unitIncidents);
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        };
-
-        loadAllIncidents.run();
-
-        // Filter functionality
-        Runnable applyFilters = () -> {
-            List<Incident> filtered = new ArrayList<>();
-            
-            String searchText = searchField.getText().toLowerCase();
-            String severityFilterValue = severityFilter.getValue();
-            String unitFilterValue = unitFilter.getValue();
-
-            for (Incident incident : allIncidents) {
-                // Apply severity filter
-                if (!severityFilterValue.equals("All Severities") 
-                    && !incident.severity.equals(severityFilterValue)) {
-                    continue;
-                }
-
-                // Apply unit filter
-                if (!unitFilterValue.equals("All Units")) {
-                    String incidentUnit = unitMap.getOrDefault(incident.unitId, "Unknown");
-                    if (!incidentUnit.equals(unitFilterValue)) {
-                        continue;
-                    }
-                }
-
-                // Apply search filter
-                if (!searchText.isEmpty()) {
-                    boolean matches = incident.summary.toLowerCase().contains(searchText);
-                    if (!matches) {
-                        // Also search in components
-                        try {
-                            List<String> componentIds = IncidentComponentRepository
-                                .getComponentIdsForIncident(incident.incidentId);
-                            for (String id : componentIds) {
-                                String name = ComponentRepository.getNameById(id);
-                                if (name != null && name.toLowerCase().contains(searchText)) {
-                                    matches = true;
-                                    break;
-                                }
-                            }
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                    if (!matches) continue;
-                }
-
-                filtered.add(incident);
-            }
-
-            incidentTable.getItems().setAll(filtered);
-        };
-
-        // Initial load
-        applyFilters.run();
-
-        searchField.textProperty().addListener((obs, old, newVal) -> applyFilters.run());
-        severityFilter.setOnAction(e -> applyFilters.run());
-        unitFilter.setOnAction(e -> applyFilters.run());
-
         Button refresh = new Button("Refresh");
-        refresh.setOnAction(e -> {
-            loadAllIncidents.run();
-            applyFilters.run();
-        });
+        AppStyles.stylePrimaryButton(refresh);
+        refresh.setOnAction(e -> loadAllIncidents());
 
-        Button deleteIncident = new Button("Delete Selected");
-        deleteIncident.setDisable(true);
-        deleteIncident.setVisible(false); // Hidden until multi-select mode
-
-        Button selectAll = new Button("Select All");
-        selectAll.setVisible(false); // Hidden until multi-select mode
-        selectAll.setOnAction(e -> incidentTable.getSelectionModel().selectAll());
-
-        Button deselectAll = new Button("Deselect All");
-        deselectAll.setVisible(false); // Hidden until multi-select mode
-        deselectAll.setOnAction(e -> incidentTable.getSelectionModel().clearSelection());
-
-        // Update multi-select button to show/hide bulk action buttons
-        multiSelectBtn.selectedProperty().addListener((obs, oldVal, newVal) -> {
-            deleteIncident.setVisible(newVal);
-            selectAll.setVisible(newVal);
-            deselectAll.setVisible(newVal);
-        });
+        Button deleteSelected = new Button("Delete Selected");
+        AppStyles.styleDangerButton(deleteSelected);
+        deleteSelected.setDisable(true);
 
         incidentTable.getSelectionModel().selectedItemProperty().addListener((obs, o, n) -> {
-            deleteIncident.setDisable(incidentTable.getSelectionModel().getSelectedItems().isEmpty());
+            deleteSelected.setDisable(incidentTable.getSelectionModel().getSelectedItems().isEmpty());
         });
 
-        deleteIncident.setOnAction(e -> {
-            List<Incident> selected = new ArrayList<>(incidentTable.getSelectionModel().getSelectedItems());
-            if (selected.isEmpty()) return;
+        deleteSelected.setOnAction(e -> handleBulkDelete());
 
-            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-            confirm.setTitle("Delete Incidents");
-            confirm.setHeaderText("Delete " + selected.size() + " incident(s)?");
-            confirm.setContentText("This action cannot be undone.");
+        actionBar.getChildren().addAll(multiSelectBtn, refresh, deleteSelected);
+        return actionBar;
+    }
 
-            if (confirm.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
-                int successCount = 0;
-                int failCount = 0;
+    /**
+     * Loads all incidents from all units in the system.
+     */
+    private void loadAllIncidents() {
+        allIncidents.clear();
+        unitMap.clear();
+        unitFilter.getItems().clear();
+        unitFilter.getItems().add("All Units");
+        unitFilter.setValue("All Units");
 
-                for (Incident incident : selected) {
+        try {
+            List<Unit> allUnits = UnitRepository.getAll();
+            for (Unit unit : allUnits) {
+                String display = unit.unitType.equals("STOCK")
+                    ? "STOCK-" + unit.stockNumber
+                    : unit.title;
+                unitMap.put(unit.unitId, display);
+                unitFilter.getItems().add(display);
+
+                List<Incident> unitIncidents = IncidentRepository.getByUnit(unit.unitId);
+                allIncidents.addAll(unitIncidents);
+            }
+            applyFilters();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            Alert error = new Alert(Alert.AlertType.ERROR);
+            error.setTitle("Error");
+            error.setHeaderText("Failed to load incidents");
+            error.setContentText(ex.getMessage());
+            error.showAndWait();
+        }
+    }
+
+    /**
+     * Applies all active filters to the incident table.
+     */
+    private void applyFilters() {
+        List<Incident> filtered = new ArrayList<>();
+
+        String searchText = searchField.getText().toLowerCase();
+        String severityFilterValue = severityFilter.getValue();
+        String unitFilterValue = unitFilter.getValue();
+
+        for (Incident incident : allIncidents) {
+            // Apply severity filter
+            if (!severityFilterValue.equals("All Severities")
+                && !incident.severity.equals(severityFilterValue)) {
+                continue;
+            }
+
+            // Apply unit filter
+            if (!"All Units".equals(unitFilterValue)) {
+                String incidentUnit = unitMap.getOrDefault(incident.unitId, "Unknown");
+                if (!incidentUnit.equals(unitFilterValue)) {
+                    continue;
+                }
+            }
+
+            // Apply search filter
+            if (!searchText.isEmpty()) {
+                boolean matches = incident.summary.toLowerCase().contains(searchText);
+                if (!matches) {
+                    // Also search in components
                     try {
-                        IncidentRepository.delete(incident.incidentId);
-                        successCount++;
+                        List<String> componentIds = IncidentComponentRepository
+                            .getComponentIdsForIncident(incident.incidentId);
+                        for (String id : componentIds) {
+                            String name = ComponentRepository.getNameById(id);
+                            if (name != null && name.toLowerCase().contains(searchText)) {
+                                matches = true;
+                                break;
+                            }
+                        }
                     } catch (Exception ex) {
                         ex.printStackTrace();
-                        failCount++;
                     }
                 }
-
-                loadAllIncidents.run();
-                applyFilters.run();
-
-                Alert result = new Alert(Alert.AlertType.INFORMATION);
-                result.setTitle("Bulk Delete Complete");
-                result.setHeaderText(successCount + " deleted, " + failCount + " failed");
-                result.showAndWait();
+                if (!matches) continue;
             }
-        });
 
-        HBox selectionActions = new HBox(10, selectAll, deselectAll);
-        HBox actions = new HBox(10, multiSelectBtn, refresh, deleteIncident);
+            filtered.add(incident);
+        }
 
-        Button back = new Button("Back");
-        back.setOnAction(e -> Navigator.show(new LandingPage()));
+        incidentTable.getItems().setAll(filtered);
+        updateStats();
+    }
 
-        Label statsLabel = new Label();
-        incidentTable.getItems().addListener((javafx.collections.ListChangeListener.Change<? extends Incident> c) -> {
-            int total = incidentTable.getItems().size();
-            long high = incidentTable.getItems().stream().filter(i -> "HIGH".equals(i.severity)).count();
-            long medium = incidentTable.getItems().stream().filter(i -> "MEDIUM".equals(i.severity)).count();
-            long low = incidentTable.getItems().stream().filter(i -> "LOW".equals(i.severity)).count();
-            
-            statsLabel.setText(String.format("Showing %d incidents | HIGH: %d | MEDIUM: %d | LOW: %d", 
-                total, high, medium, low));
-        });
-        statsLabel.setText("Loading...");
+    /**
+     * Updates the statistics label with current filter results.
+     */
+    private void updateStats() {
+        int total = incidentTable.getItems().size();
+        long high = incidentTable.getItems().stream().filter(i -> "HIGH".equals(i.severity)).count();
+        long medium = incidentTable.getItems().stream().filter(i -> "MEDIUM".equals(i.severity)).count();
+        long low = incidentTable.getItems().stream().filter(i -> "LOW".equals(i.severity)).count();
 
-        getChildren().addAll(
-                title,
-                filterBox,
-                statsLabel,
-                incidentTable,
-                selectionActions,
-                actions,
-                back
-        );
+        statsLabel.setText(String.format("Showing %d incidents | HIGH: %d | MEDIUM: %d | LOW: %d",
+            total, high, medium, low));
+    }
+
+    /**
+     * Handles bulk deletion of selected incidents.
+     */
+    private void handleBulkDelete() {
+        List<Incident> selected = new ArrayList<>(incidentTable.getSelectionModel().getSelectedItems());
+        if (selected.isEmpty()) return;
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Delete Incidents");
+        confirm.setHeaderText("Delete " + selected.size() + " incident(s)?");
+        confirm.setContentText("This action cannot be undone.");
+
+        if (confirm.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+            int successCount = 0;
+            int failCount = 0;
+
+            for (Incident incident : selected) {
+                try {
+                    IncidentRepository.delete(incident.incidentId);
+                    successCount++;
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    failCount++;
+                }
+            }
+
+            loadAllIncidents();
+
+            Alert result = new Alert(Alert.AlertType.INFORMATION);
+            result.setTitle("Bulk Delete Complete");
+            result.setHeaderText(successCount + " deleted, " + failCount + " failed");
+            result.showAndWait();
+        }
     }
 }
