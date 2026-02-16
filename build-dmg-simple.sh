@@ -17,6 +17,7 @@ echo "[2/2] Creating DMG..."
 jpackage \
   --input target \
   --name "SDS Incident Tracker" \
+  --icon src/main/resources/appicon.icns \
   --main-jar incident-tracker-1.0-SNAPSHOT.jar \
   --main-class com.sdsweather.Launcher \
   --type dmg \
