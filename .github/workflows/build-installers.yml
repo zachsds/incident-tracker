@@ -1,0 +1,80 @@
+name: Build Installers
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-mac:
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Java 21
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '21'
+        
+    - name: Build with Maven
+      run: mvn clean package
+      
+    - name: Create DMG
+      run: |
+        jpackage \
+          --input target \
+          --name "SDS Incident Tracker" \
+          --main-jar incident-tracker-1.0-SNAPSHOT.jar \
+          --main-class com.sdsweather.Launcher \
+          --type dmg \
+          --dest target \
+          --app-version 1.0 \
+          --vendor "SDS Weather" \
+          --copyright "Copyright 2026 SDS Weather" \
+          --mac-package-identifier com.sdsweather.incidenttracker
+          
+    - name: Upload DMG
+      uses: actions/upload-artifact@v4
+      with:
+        name: SDS-Incident-Tracker-macOS
+        path: target/*.dmg
+        
+  build-windows:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Java 21
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '21'
+        
+    - name: Build with Maven
+      run: mvn clean package
+      
+    - name: Create EXE
+      run: |
+        jpackage `
+          --input target `
+          --name "SDS Incident Tracker" `
+          --main-jar incident-tracker-1.0-SNAPSHOT.jar `
+          --main-class com.sdsweather.Launcher `
+          --type exe `
+          --dest target `
+          --app-version 1.0 `
+          --vendor "SDS Weather" `
+          --win-dir-chooser `
+          --win-menu `
+          --win-shortcut
+          
+    - name: Upload EXE
+      uses: actions/upload-artifact@v4
+      with:
+        name: SDS-Incident-Tracker-Windows
+        path: target/*.exe
