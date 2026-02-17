@@ -6,6 +6,18 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
+/**
+ * AddUnitPage - Form for registering new units in the system.
+ *
+ * Supports both STOCK and DEPLOYED unit types. The form dynamically
+ * shows the stock number field for STOCK units or the title field for
+ * DEPLOYED units. After saving, offers options to add another or return
+ * to the main menu.
+ *
+ * @author Zachary Sneed
+ * @version 1.0
+ * @since 2026-02-16
+ */
 public class AddUnitPage extends VBox {
 
     public AddUnitPage() {

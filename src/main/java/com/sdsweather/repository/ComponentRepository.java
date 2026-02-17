@@ -11,6 +11,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * ComponentRepository - CRUD operations for components via REST API.
+ *
+ * Manages hardware components within categories. Provides lookup by name and ID
+ * for use in incident forms and analytics. Only active components are returned
+ * for selection in new incidents.
+ *
+ * API Base: https://192.168.0.237:3000/components
+ *
+ * @author Zachary Sneed
+ * @version 1.0
+ * @since 2026-02-16
+ */
 public class ComponentRepository {
 
     private static final String BASE = "https://192.168.0.237:3000";

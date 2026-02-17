@@ -1,0 +1,447 @@
+==== CONFIGS ====		
+{
+    "base_path": "/Users/sdsweather/Documents/design projects/incident-tracker/src/main",
+    "out": "/Users/sdsweather/Documents/design projects/incident-tracker/src/main/javadoc",
+    "javadoc_executable": "/Library/Java/JavaVirtualMachines/temurin-25.jdk/Contents/Home/bin/javadoc",
+    "exclude": [],
+    "raw_params": ""
+}
+
+==== COMMAND ====
+"/Library/Java/JavaVirtualMachines/temurin-25.jdk/Contents/Home/bin/javadoc" 
+	-sourcepath "/Users/sdsweather/Documents/design projects/incident-tracker/src/main" 
+	-d "/Users/sdsweather/Documents/design projects/incident-tracker/src/main/javadoc" 
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/App.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/Launcher.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/model/Component.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/model/ComponentCategory.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/model/Incident.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/model/Unit.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/navigation/Navigator.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/repository/AuditLogRepository.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/repository/AuthRepository.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/repository/ComponentCategoryRepository.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/repository/ComponentRepository.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/repository/IncidentComponentRepository.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/repository/IncidentRepository.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/repository/UnitRepository.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/repository/UserRepository.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/security/AuditLogger.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/security/PasswordHasher.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/security/SSLConfig.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/security/SessionManager.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/services/EmailService.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AddIncidentDialog.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AddUnitPage.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AnalysisPage.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AnalyticsPage.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AppStyles.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AuditLogPage.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/ForgotPasswordDialog.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/IncidentHistoryPage.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/LandingPage.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/LoginPage.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/SettingsPage.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/UnitDetailPage.java"
+	"/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/ViewUnitsPage.java"
+
+
+==== JAVADOC OUTPUT ====
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/App.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/Launcher.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/model/Component.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/model/ComponentCategory.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/model/Incident.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/model/Unit.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/navigation/Navigator.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/repository/AuditLogRepository.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/repository/AuthRepository.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/repository/ComponentCategoryRepository.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/repository/ComponentRepository.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/repository/IncidentComponentRepository.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/repository/IncidentRepository.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/repository/UnitRepository.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/repository/UserRepository.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/security/AuditLogger.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/security/PasswordHasher.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/security/SSLConfig.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/security/SessionManager.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/services/EmailService.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AddIncidentDialog.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AddUnitPage.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AnalysisPage.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AnalyticsPage.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AppStyles.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AuditLogPage.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/ForgotPasswordDialog.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/IncidentHistoryPage.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/LandingPage.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/LoginPage.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/SettingsPage.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/UnitDetailPage.java...
+Loading source file /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/ViewUnitsPage.java...
+Constructing Javadoc information...
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/App.java:6: error: package javafx.application does not exist
+import javafx.application.Application;
+                         ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/App.java:7: error: package javafx.stage does not exist
+import javafx.stage.Stage;
+                   ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/App.java:9: error: cannot find symbol
+public class App extends Application {
+                         ^
+  symbol: class Application
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/App.java:12: error: cannot find symbol
+    public void start(Stage stage) throws Exception {
+                      ^
+  symbol:   class Stage
+  location: class App
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/navigation/Navigator.java:5: error: package javafx.scene does not exist
+import javafx.scene.Scene;
+                   ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/navigation/Navigator.java:6: error: package javafx.scene.layout does not exist
+import javafx.scene.layout.Pane;
+                          ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/navigation/Navigator.java:7: error: package javafx.stage does not exist
+import javafx.stage.Stage;
+                   ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/navigation/Navigator.java:11: error: cannot find symbol
+    private static Stage stage;
+                   ^
+  symbol:   class Stage
+  location: class Navigator
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/navigation/Navigator.java:13: error: cannot find symbol
+    public static void init(Stage primaryStage) {
+                            ^
+  symbol:   class Stage
+  location: class Navigator
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/navigation/Navigator.java:20: error: cannot find symbol
+    public static void show(Pane root) {
+                            ^
+  symbol:   class Pane
+  location: class Navigator
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/services/EmailService.java:3: error: package jakarta.mail does not exist
+import jakarta.mail.Message;
+                   ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/services/EmailService.java:4: error: package jakarta.mail does not exist
+import jakarta.mail.PasswordAuthentication;
+                   ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/services/EmailService.java:5: error: package jakarta.mail does not exist
+import jakarta.mail.Session;
+                   ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/services/EmailService.java:6: error: package jakarta.mail does not exist
+import jakarta.mail.Transport;
+                   ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/services/EmailService.java:7: error: package jakarta.mail.internet does not exist
+import jakarta.mail.internet.InternetAddress;
+                            ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/services/EmailService.java:8: error: package jakarta.mail.internet does not exist
+import jakarta.mail.internet.MimeMessage;
+                            ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AddIncidentDialog.java:8: error: package javafx.scene.layout does not exist
+import javafx.scene.layout.VBox;
+                          ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AddIncidentDialog.java:10: error: cannot find symbol
+public class AddIncidentDialog extends Dialog<Void> {
+                                       ^
+  symbol: class Dialog
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AddIncidentDialog.java:7: error: package javafx.scene.control does not exist
+import javafx.scene.control.*;
+                   ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AddUnitPage.java:5: error: package javafx.geometry does not exist
+import javafx.geometry.Insets;
+                      ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AddUnitPage.java:7: error: package javafx.scene.layout does not exist
+import javafx.scene.layout.VBox;
+                          ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AddUnitPage.java:9: error: cannot find symbol
+public class AddUnitPage extends VBox {
+                                 ^
+  symbol: class VBox
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AddUnitPage.java:6: error: package javafx.scene.control does not exist
+import javafx.scene.control.*;
+                   ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AnalysisPage.java:4: error: package javafx.geometry does not exist
+import javafx.geometry.Insets;
+                      ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AnalysisPage.java:5: error: package javafx.geometry does not exist
+import javafx.geometry.Pos;
+                      ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AnalysisPage.java:6: error: package javafx.scene.control does not exist
+import javafx.scene.control.Button;
+                           ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AnalysisPage.java:7: error: package javafx.scene.control does not exist
+import javafx.scene.control.Label;
+                           ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AnalysisPage.java:8: error: package javafx.scene.image does not exist
+import javafx.scene.image.Image;
+                         ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AnalysisPage.java:9: error: package javafx.scene.image does not exist
+import javafx.scene.image.ImageView;
+                         ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AnalysisPage.java:10: error: package javafx.scene.layout does not exist
+import javafx.scene.layout.HBox;
+                          ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AnalysisPage.java:11: error: package javafx.scene.layout does not exist
+import javafx.scene.layout.VBox;
+                          ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AnalysisPage.java:30: error: cannot find symbol
+public class AnalysisPage extends VBox {
+                                  ^
+  symbol: class VBox
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AnalysisPage.java:93: error: cannot find symbol
+    private HBox createHeader() {
+            ^
+  symbol:   class HBox
+  location: class AnalysisPage
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AnalysisPage.java:123: error: cannot find symbol
+    private VBox createAnalysisCard(String icon, String title, String description, Runnable action) {
+            ^
+  symbol:   class VBox
+  location: class AnalysisPage
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AnalyticsPage.java:10: error: package javafx.geometry does not exist
+import javafx.geometry.Insets;
+                      ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AnalyticsPage.java:12: error: package javafx.scene.layout does not exist
+import javafx.scene.layout.VBox;
+                          ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AnalyticsPage.java:13: error: package javafx.scene.layout does not exist
+import javafx.scene.layout.HBox;
+                          ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AnalyticsPage.java:14: error: package javafx.scene.layout does not exist
+import javafx.scene.layout.GridPane;
+                          ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AnalyticsPage.java:15: error: package javafx.scene.paint does not exist
+import javafx.scene.paint.Color;
+                         ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AnalyticsPage.java:21: error: cannot find symbol
+public class AnalyticsPage extends VBox {
+                                   ^
+  symbol: class VBox
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AnalyticsPage.java:11: error: package javafx.scene.control does not exist
+import javafx.scene.control.*;
+                   ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AppStyles.java:3: error: package javafx.scene.control does not exist
+import javafx.scene.control.Button;
+                           ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AppStyles.java:4: error: package javafx.scene.control does not exist
+import javafx.scene.control.TextField;
+                           ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AppStyles.java:5: error: package javafx.scene.control does not exist
+import javafx.scene.control.PasswordField;
+                           ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AppStyles.java:104: error: cannot find symbol
+    public static void addHoverEffect(Button button, String normalStyle, String hoverStyle) {
+                                      ^
+  symbol:   class Button
+  location: class AppStyles
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AppStyles.java:110: error: cannot find symbol
+    public static void stylePrimaryButton(Button button) {
+                                          ^
+  symbol:   class Button
+  location: class AppStyles
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AppStyles.java:114: error: cannot find symbol
+    public static void styleDangerButton(Button button) {
+                                         ^
+  symbol:   class Button
+  location: class AppStyles
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AppStyles.java:118: error: cannot find symbol
+    public static void styleSuccessButton(Button button) {
+                                          ^
+  symbol:   class Button
+  location: class AppStyles
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AppStyles.java:122: error: cannot find symbol
+    public static void styleSecondaryButton(Button button) {
+                                            ^
+  symbol:   class Button
+  location: class AppStyles
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AppStyles.java:126: error: cannot find symbol
+    public static void styleTextField(TextField field) {
+                                      ^
+  symbol:   class TextField
+  location: class AppStyles
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AppStyles.java:130: error: cannot find symbol
+    public static void stylePasswordField(PasswordField field) {
+                                          ^
+  symbol:   class PasswordField
+  location: class AppStyles
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AuditLogPage.java:6: error: package javafx.geometry does not exist
+import javafx.geometry.Insets;
+                      ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AuditLogPage.java:8: error: package javafx.scene.layout does not exist
+import javafx.scene.layout.VBox;
+                          ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AuditLogPage.java:9: error: package javafx.scene.layout does not exist
+import javafx.scene.layout.HBox;
+                          ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AuditLogPage.java:10: error: package javafx.beans.property does not exist
+import javafx.beans.property.SimpleStringProperty;
+                            ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AuditLogPage.java:15: error: cannot find symbol
+public class AuditLogPage extends VBox {
+                                  ^
+  symbol: class VBox
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/AuditLogPage.java:7: error: package javafx.scene.control does not exist
+import javafx.scene.control.*;
+                   ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/ForgotPasswordDialog.java:4: error: package javafx.scene.layout does not exist
+import javafx.scene.layout.VBox;
+                          ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/ForgotPasswordDialog.java:11: error: cannot find symbol
+public class ForgotPasswordDialog extends Dialog<Void> {
+                                          ^
+  symbol: class Dialog
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/ForgotPasswordDialog.java:3: error: package javafx.scene.control does not exist
+import javafx.scene.control.*;
+                   ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/IncidentHistoryPage.java:10: error: package javafx.geometry does not exist
+import javafx.geometry.Insets;
+                      ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/IncidentHistoryPage.java:11: error: package javafx.geometry does not exist
+import javafx.geometry.Pos;
+                      ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/IncidentHistoryPage.java:13: error: package javafx.scene.image does not exist
+import javafx.scene.image.Image;
+                         ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/IncidentHistoryPage.java:14: error: package javafx.scene.image does not exist
+import javafx.scene.image.ImageView;
+                         ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/IncidentHistoryPage.java:15: error: package javafx.scene.layout does not exist
+import javafx.scene.layout.HBox;
+                          ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/IncidentHistoryPage.java:16: error: package javafx.scene.layout does not exist
+import javafx.scene.layout.VBox;
+                          ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/IncidentHistoryPage.java:17: error: package javafx.scene.layout does not exist
+import javafx.scene.layout.Priority;
+                          ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/IncidentHistoryPage.java:18: error: package javafx.scene.paint does not exist
+import javafx.scene.paint.Color;
+                         ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/IncidentHistoryPage.java:19: error: package javafx.beans.property does not exist
+import javafx.beans.property.SimpleStringProperty;
+                            ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/IncidentHistoryPage.java:42: error: cannot find symbol
+public class IncidentHistoryPage extends VBox {
+                                         ^
+  symbol: class VBox
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/IncidentHistoryPage.java:44: error: cannot find symbol
+    private TableView<Incident> incidentTable;
+            ^
+  symbol:   class TableView
+  location: class IncidentHistoryPage
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/IncidentHistoryPage.java:47: error: cannot find symbol
+    private TextField searchField;
+            ^
+  symbol:   class TextField
+  location: class IncidentHistoryPage
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/IncidentHistoryPage.java:48: error: cannot find symbol
+    private ComboBox<String> severityFilter;
+            ^
+  symbol:   class ComboBox
+  location: class IncidentHistoryPage
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/IncidentHistoryPage.java:49: error: cannot find symbol
+    private ComboBox<String> unitFilter;
+            ^
+  symbol:   class ComboBox
+  location: class IncidentHistoryPage
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/IncidentHistoryPage.java:50: error: cannot find symbol
+    private Label statsLabel;
+            ^
+  symbol:   class Label
+  location: class IncidentHistoryPage
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/IncidentHistoryPage.java:51: error: cannot find symbol
+    private ToggleButton multiSelectBtn;
+            ^
+  symbol:   class ToggleButton
+  location: class IncidentHistoryPage
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/IncidentHistoryPage.java:98: error: cannot find symbol
+    private HBox createHeader() {
+            ^
+  symbol:   class HBox
+  location: class IncidentHistoryPage
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/IncidentHistoryPage.java:124: error: cannot find symbol
+    private HBox createFilterBar() {
+            ^
+  symbol:   class HBox
+  location: class IncidentHistoryPage
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/IncidentHistoryPage.java:158: error: cannot find symbol
+    private VBox createTableContainer() {
+            ^
+  symbol:   class VBox
+  location: class IncidentHistoryPage
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/IncidentHistoryPage.java:278: error: cannot find symbol
+    private HBox createActionBar() {
+            ^
+  symbol:   class HBox
+  location: class IncidentHistoryPage
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/IncidentHistoryPage.java:12: error: package javafx.scene.control does not exist
+import javafx.scene.control.*;
+                   ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/LandingPage.java:5: error: package javafx.geometry does not exist
+import javafx.geometry.Insets;
+                      ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/LandingPage.java:6: error: package javafx.geometry does not exist
+import javafx.geometry.Pos;
+                      ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/LandingPage.java:7: error: package javafx.scene.control does not exist
+import javafx.scene.control.Label;
+                           ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/LandingPage.java:8: error: package javafx.scene.image does not exist
+import javafx.scene.image.Image;
+                         ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/LandingPage.java:9: error: package javafx.scene.image does not exist
+import javafx.scene.image.ImageView;
+                         ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/LandingPage.java:10: error: package javafx.scene.layout does not exist
+import javafx.scene.layout.HBox;
+                          ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/LandingPage.java:11: error: package javafx.scene.layout does not exist
+import javafx.scene.layout.VBox;
+                          ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/LandingPage.java:12: error: package javafx.scene.layout does not exist
+import javafx.scene.layout.Priority;
+                          ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/LandingPage.java:31: error: cannot find symbol
+public class LandingPage extends VBox {
+                                 ^
+  symbol: class VBox
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/LandingPage.java:77: error: cannot find symbol
+    private HBox createHeader() {
+            ^
+  symbol:   class HBox
+  location: class LandingPage
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/LandingPage.java:117: error: cannot find symbol
+    private VBox createNavigationCards() {
+            ^
+  symbol:   class VBox
+  location: class LandingPage
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/LandingPage.java:189: error: cannot find symbol
+    private VBox createNavCard(String icon, String title, String description, Runnable action) {
+            ^
+  symbol:   class VBox
+  location: class LandingPage
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/LoginPage.java:5: error: package javafx.geometry does not exist
+import javafx.geometry.Insets;
+                      ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/LoginPage.java:6: error: package javafx.geometry does not exist
+import javafx.geometry.Pos;
+                      ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/LoginPage.java:8: error: package javafx.scene.image does not exist
+import javafx.scene.image.Image;
+                         ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/LoginPage.java:9: error: package javafx.scene.image does not exist
+import javafx.scene.image.ImageView;
+                         ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/LoginPage.java:10: error: package javafx.scene.input does not exist
+import javafx.scene.input.KeyCode;
+                         ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/LoginPage.java:11: error: package javafx.scene.layout does not exist
+import javafx.scene.layout.StackPane;
+                          ^
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/ui/LoginPage.java:12: error: package javafx.scene.layout does not exist
+import javafx.scene.layout.VBox;
+                          ^
+100 errors
+
+

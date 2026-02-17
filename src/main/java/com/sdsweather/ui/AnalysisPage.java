@@ -23,7 +23,7 @@ import javafx.scene.layout.VBox;
  * - Quick access to both analysis tools
  * - Consistent branding with logo display
  * 
- * @author SDS Weather Development Team
+ * @author Zachary Sneed
  * @version 1.0
  * @since 2026-02-16
  */

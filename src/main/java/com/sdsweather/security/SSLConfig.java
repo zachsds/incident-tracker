@@ -7,10 +7,30 @@ import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 
+/**
+ * SSLConfig - Configures HTTPS trust for the application's self-signed certificate.
+ *
+ * The Rock Pi server uses a self-signed certificate not trusted by the default
+ * Java trust store. This class loads the bundled certificate (itsserver.crt)
+ * from application resources and creates a custom SSLContext that trusts it.
+ * No manual certificate installation is required on client machines.
+ *
+ * @author Zachary Sneed
+ * @version 1.0
+ * @since 2026-02-16
+ */
 public class SSLConfig {
 
+    /** Cached SSLContext — initialized once and reused for all requests */
     private static SSLContext sslContext;
 
+    /**
+     * Returns an SSLContext configured to trust the bundled server certificate.
+     * Initializes once and caches for subsequent calls.
+     *
+     * @return Configured SSLContext
+     * @throws RuntimeException if the certificate cannot be loaded
+     */
     public static SSLContext getSSLContext() {
         if (sslContext != null) {
             return sslContext;
@@ -47,6 +67,12 @@ public class SSLConfig {
         }
     }
 
+    /**
+     * Creates an HttpClient configured to trust the bundled server certificate.
+     * All repository classes should use this to create their HTTP clients.
+     *
+     * @return HttpClient with custom SSL trust configuration
+     */
     public static HttpClient createHttpClient() {
         return HttpClient.newBuilder()
                 .sslContext(getSSLContext())

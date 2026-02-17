@@ -12,6 +12,18 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * UnitRepository - CRUD operations for units via REST API.
+ *
+ * Manages both STOCK and DEPLOYED unit records. All mutating operations
+ * (create, delete) are logged to the audit trail via AuditLogger.
+ *
+ * API Base: https://192.168.0.237:3000/units
+ *
+ * @author Zachary Sneed
+ * @version 1.0
+ * @since 2026-02-16
+ */
 public class UnitRepository {
 
     private static final String BASE = "https://192.168.0.237:3000";

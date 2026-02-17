@@ -8,6 +8,18 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+/**
+ * ForgotPasswordDialog - Dialog for submitting a password reset request.
+ *
+ * Sends the user's username and details to the server which emails the
+ * administrator. An admin then manually resets the password via Settings.
+ *
+ * API Endpoint: POST https://192.168.0.237:3000/auth/forgot-password
+ *
+ * @author Zachary Sneed
+ * @version 1.0
+ * @since 2026-02-16
+ */
 public class ForgotPasswordDialog extends Dialog<Void> {
 
     public ForgotPasswordDialog(String maybeUsername) {

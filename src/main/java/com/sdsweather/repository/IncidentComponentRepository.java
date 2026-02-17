@@ -11,6 +11,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * IncidentComponentRepository - Manages the link between incidents and components.
+ *
+ * Handles the many-to-many relationship between incidents and components via
+ * the incident_components join table. Used when creating incidents and when
+ * displaying which components were involved in each incident.
+ *
+ * API Base: https://192.168.0.237:3000/incident-components
+ *
+ * @author Zachary Sneed
+ * @version 1.0
+ * @since 2026-02-16
+ */
 public class IncidentComponentRepository {
 
     private static final String BASE = "https://192.168.0.237:3000";

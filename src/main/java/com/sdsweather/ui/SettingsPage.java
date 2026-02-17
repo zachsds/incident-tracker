@@ -15,6 +15,19 @@ import javafx.scene.text.FontWeight;
 
 import java.util.List;
 
+/**
+ * SettingsPage - System configuration and administration interface.
+ *
+ * Provides component category and component management for all users.
+ * Admin users also get access to user management (add, reset password,
+ * delete) and the audit log viewer.
+ *
+ * Admin-only sections are conditionally rendered based on SessionManager.isAdmin().
+ *
+ * @author Zachary Sneed
+ * @version 1.0
+ * @since 2026-02-16
+ */
 public class SettingsPage extends VBox {
 
     public SettingsPage() {

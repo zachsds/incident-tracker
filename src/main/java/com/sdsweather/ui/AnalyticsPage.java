@@ -18,6 +18,25 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * AnalyticsPage - Comprehensive analytics dashboard for incident trends and patterns.
+ *
+ * Provides visual analysis of component failures, unit performance, and incident
+ * patterns over a configurable date range. Helps identify problematic components
+ * and units requiring preventive maintenance.
+ *
+ * Features:
+ *   - Date range filtering (default: last 3 months)
+ *   - Summary statistics (total, HIGH, MEDIUM, LOW counts)
+ *   - Component failure frequency ranking table
+ *   - Most problematic units table (top 10)
+ *   - Component co-occurrence analysis (which parts fail together)
+ *   - Auto-generated key insights
+ *
+ * @author Zachary Sneed
+ * @version 1.0
+ * @since 2026-02-16
+ */
 public class AnalyticsPage extends VBox {
 
     public AnalyticsPage() {
@@ -358,6 +377,7 @@ public class AnalyticsPage extends VBox {
     }
 
     // Helper classes for table data
+    /** Data transfer object for component failure frequency table rows. */
     public static class ComponentFailureData {
         int rank;
         String componentName;
@@ -365,6 +385,7 @@ public class AnalyticsPage extends VBox {
         double percentOfTotal;
     }
 
+    /** Data transfer object for the most problematic units table rows. */
     public static class UnitIncidentData {
         int rank;
         String unitName;

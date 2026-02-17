@@ -10,11 +10,24 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * AuditLogRepository - Retrieves audit log entries from the REST API.
+ *
+ * Supports date range and limit filtering. Used exclusively by AuditLogPage
+ * to display the system audit trail to administrators.
+ *
+ * API Endpoint: GET https://192.168.0.237:3000/audit-logs
+ *
+ * @author Zachary Sneed
+ * @version 1.0
+ * @since 2026-02-16
+ */
 public class AuditLogRepository {
 
     private static final String BASE = "https://192.168.0.237:3000";
     private static final HttpClient CLIENT = SSLConfig.createHttpClient();
 
+    /** Data transfer object representing a single audit log entry. */
     public static class AuditLog {
         public String id;
         public String userId;
@@ -26,6 +39,15 @@ public class AuditLogRepository {
         public String timestamp;
     }
 
+    /**
+     * Retrieves audit log entries filtered by date range and limit.
+     *
+     * @param startDate ISO date-time string for range start (or null)
+     * @param endDate   ISO date-time string for range end (or null)
+     * @param limit     Maximum number of entries to return (or null for default)
+     * @return List of audit log entries matching the criteria
+     * @throws Exception If the API request fails
+     */
     public static List<AuditLog> getAll(String startDate, String endDate, Integer limit) throws Exception {
 
         StringBuilder url = new StringBuilder(BASE + "/audit-logs?");

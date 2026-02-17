@@ -8,10 +8,31 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+/**
+ * AuthRepository - Handles user authentication against the REST API.
+ *
+ * Posts credentials to /auth/login, parses the role from the response,
+ * and initializes a session via SessionManager on success.
+ *
+ * API Endpoint: POST https://192.168.0.237:3000/auth/login
+ *
+ * @author Zachary Sneed
+ * @version 1.0
+ * @since 2026-02-16
+ */
 public class AuthRepository {
 
     private static final HttpClient CLIENT = SSLConfig.createHttpClient();
 
+    /**
+     * Authenticates a user with the given credentials.
+     * On success, starts a session in SessionManager.
+     *
+     * @param username The username to authenticate
+     * @param password The plaintext password
+     * @return true if authentication succeeded, false otherwise
+     * @throws Exception If a network or parsing error occurs
+     */
     public static boolean login(String username, String password) throws Exception {
 
         try {

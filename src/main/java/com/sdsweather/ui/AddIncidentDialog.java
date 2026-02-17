@@ -7,6 +7,20 @@ import com.sdsweather.repository.IncidentRepository;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
+/**
+ * AddIncidentDialog - Modal dialog for recording a new incident on a unit.
+ *
+ * Two-step component selection: choose a category, then pick components from
+ * that category (multi-select). On save, creates the incident and all component
+ * links via the API.
+ *
+ * Usage:
+ *   new AddIncidentDialog(unit.unitId).showAndWait();
+ *
+ * @author Zachary Sneed
+ * @version 1.0
+ * @since 2026-02-16
+ */
 public class AddIncidentDialog extends Dialog<Void> {
 
     public AddIncidentDialog(String unitId) {

@@ -13,6 +13,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * IncidentRepository - CRUD operations for incidents via REST API.
+ *
+ * Handles creating, retrieving, and deleting incident records. The
+ * createAndReturnId() method is used when component links also need
+ * to be created immediately after the incident.
+ *
+ * API Base: https://192.168.0.237:3000/incidents
+ *
+ * @author Zachary Sneed
+ * @version 1.0
+ * @since 2026-02-16
+ */
 public class IncidentRepository {
 
     private static final String BASE = "https://192.168.0.237:3000";

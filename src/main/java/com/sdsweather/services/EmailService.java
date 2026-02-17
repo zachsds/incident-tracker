@@ -9,6 +9,24 @@ import jakarta.mail.internet.MimeMessage;
 
 import java.util.Properties;
 
+/**
+ * EmailService - Sends outbound email notifications via SMTP.
+ *
+ * Currently handles password reset request emails to the system administrator.
+ * SMTP credentials are read from environment variables to keep them out of
+ * source code.
+ *
+ * Required environment variables:
+ *   SDS_SMTP_HOST  - SMTP server hostname
+ *   SDS_SMTP_PORT  - SMTP port (typically 587 for STARTTLS)
+ *   SDS_SMTP_USER  - SMTP username / sender address
+ *   SDS_SMTP_PASS  - SMTP password or app password
+ *   SDS_ADMIN_EMAIL - Administrator's email address
+ *
+ * @author Zachary Sneed
+ * @version 1.0
+ * @since 2026-02-16
+ */
 public class EmailService {
 
     public static void sendPasswordResetRequest(String username, String details) throws Exception {

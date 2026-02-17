@@ -35,7 +35,7 @@ import java.util.*;
  * - Color-coded severity indicators
  * - Component association display
  * 
- * @author SDS Weather Development Team
+ * @author Zachary Sneed
  * @version 1.0
  * @since 2026-02-16
  */

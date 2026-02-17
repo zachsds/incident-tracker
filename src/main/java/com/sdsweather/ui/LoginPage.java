@@ -11,6 +11,17 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
+/**
+ * LoginPage - Authentication entry point for the application.
+ *
+ * Displays the company logo, a styled login form with username and password
+ * fields, show/hide password toggle, and a forgot password link. On successful
+ * authentication navigates to the LandingPage.
+ *
+ * @author Zachary Sneed
+ * @version 1.0
+ * @since 2026-02-16
+ */
 public class LoginPage extends VBox {
 
     public LoginPage() {

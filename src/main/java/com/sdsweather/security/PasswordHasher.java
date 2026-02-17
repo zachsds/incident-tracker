@@ -5,12 +5,37 @@ import javax.crypto.spec.PBEKeySpec;
 import java.security.SecureRandom;
 import java.util.Base64;
 
+/**
+ * PasswordHasher - PBKDF2 password hashing and verification utility.
+ *
+ * Implements PBKDF2WithHmacSHA256 with per-password random salts for secure
+ * password storage. Matches the algorithm used server-side for compatibility.
+ *
+ * Hash format: "{iterations}:{base64-salt}:{base64-hash}"
+ *
+ * Security parameters:
+ *   Algorithm:  PBKDF2WithHmacSHA256
+ *   Salt:       16 bytes, randomly generated per password
+ *   Key length: 256 bits
+ *   Iterations: 120,000 (OWASP recommended minimum)
+ *
+ * @author Zachary Sneed
+ * @version 1.0
+ * @since 2026-02-16
+ */
 public class PasswordHasher {
 
     private static final int saltLen = 16;
     private static final int keyLenBits = 256;
     private static final int iterations = 120_000;
 
+    /**
+     * Hashes a plaintext password using PBKDF2 with a random salt.
+     *
+     * @param password The plaintext password
+     * @return Formatted string: "iterations:salt:hash"
+     * @throws Exception If cryptographic operations fail
+     */
     public static String hash(String password) throws Exception {
 
         byte[] salt = new byte[saltLen];
@@ -24,6 +49,15 @@ public class PasswordHasher {
         return iterations + ":" + saltB64 + ":" + hashB64;
     }
 
+    /**
+     * Verifies a plaintext password against a stored hash.
+     * Uses constant-time comparison to prevent timing attacks.
+     *
+     * @param password The plaintext password to verify
+     * @param stored   The stored hash in format "iterations:salt:hash"
+     * @return true if the password matches, false otherwise
+     * @throws Exception If cryptographic operations fail
+     */
     public static boolean verify(String password, String stored) throws Exception {
 
         String[] parts = stored.split(":");

@@ -4,6 +4,21 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
 
+/**
+ * AppStyles - Centralized style constants and helper methods for the UI.
+ *
+ * Defines the application's color palette, button styles, input field styles,
+ * card styles, and typography. All pages reference these constants to maintain
+ * a consistent look and feel throughout the application.
+ *
+ * Usage:
+ *   AppStyles.stylePrimaryButton(myButton);
+ *   label.setStyle(AppStyles.PAGE_TITLE);
+ *
+ * @author Zachary Sneed
+ * @version 1.0
+ * @since 2026-02-16
+ */
 public class AppStyles {
 
     // Color Palette

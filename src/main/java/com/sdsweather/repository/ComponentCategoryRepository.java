@@ -11,6 +11,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * ComponentCategoryRepository - CRUD operations for component categories via REST API.
+ *
+ * Manages the component categories used to organize hardware components.
+ * Categories are fetched when populating the incident form and settings page.
+ *
+ * API Base: https://192.168.0.237:3000/component-categories
+ *
+ * @author Zachary Sneed
+ * @version 1.0
+ * @since 2026-02-16
+ */
 public class ComponentCategoryRepository {
 
     private static final String BASE = "https://192.168.0.237:3000";

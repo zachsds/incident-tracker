@@ -11,11 +11,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * UserRepository - CRUD operations for user accounts via REST API.
+ *
+ * Manages user accounts including creation, password resets, role changes,
+ * and deletion. All operations require admin authentication. Used exclusively
+ * by the Settings page user management section.
+ *
+ * API Base: https://192.168.0.237:3000/users
+ *
+ * @author Zachary Sneed
+ * @version 1.0
+ * @since 2026-02-16
+ */
 public class UserRepository {
 
     private static final String BASE = "https://192.168.0.237:3000";
     private static final HttpClient CLIENT = SSLConfig.createHttpClient();
 
+    /** Data transfer object representing a user account. */
     public static class User {
         public String id;
         public String username;

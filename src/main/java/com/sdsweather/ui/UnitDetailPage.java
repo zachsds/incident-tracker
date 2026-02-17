@@ -16,6 +16,17 @@ import javafx.beans.property.SimpleStringProperty;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * UnitDetailPage - Detailed incident history view for a specific unit.
+ *
+ * Shows unit identification info and a sortable, filterable table of all
+ * incidents associated with that unit. Supports adding and deleting incidents,
+ * with real-time search and severity filtering.
+ *
+ * @author Zachary Sneed
+ * @version 1.0
+ * @since 2026-02-16
+ */
 public class UnitDetailPage extends VBox {
 
     public UnitDetailPage(Unit unit) {
