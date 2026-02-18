@@ -1,80 +1,100 @@
-name: Build Installers
+name: Build Native Installers
 
 on:
-  push:
-    branches: [ main, master ]
+  release:
+    types: [published]
   workflow_dispatch:
 
 jobs:
-  build-mac:
+  build-macos:
     runs-on: macos-latest
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
       
-    - name: Setup Java 21
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'temurin'
-        java-version: '21'
-        
-    - name: Build with Maven
-      run: mvn clean package
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
       
-    - name: Create DMG
-      run: |
-        jpackage \
-          --input target \
-          --name "SDS Incident Tracker" \
-          --main-jar incident-tracker-1.0-SNAPSHOT.jar \
-          --main-class com.sdsweather.Launcher \
-          --type dmg \
-          --dest target \
-          --app-version 1.0 \
-          --vendor "SDS Weather" \
-          --copyright "Copyright 2026 SDS Weather" \
-          --mac-package-identifier com.sdsweather.incidenttracker
-          
-    - name: Upload DMG
-      uses: actions/upload-artifact@v4
-      with:
-        name: SDS-Incident-Tracker-macOS
-        path: target/*.dmg
-        
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      
+      - name: Build with Maven
+        run: mvn clean package -DskipTests
+      
+      - name: Build DMG with jpackage
+        run: |
+          jpackage \
+            --input target/ \
+            --name "SDS Incident Tracker" \
+            --main-jar incident-tracker-1.0-SNAPSHOT.jar \
+            --main-class com.sdsweather.Launcher \
+            --type dmg \
+            --app-version "1.0.0" \
+            --vendor "SDS Weather" \
+            --copyright "Copyright 2026 SDS Weather" \
+            --mac-package-name "SDS Incident Tracker" \
+            --icon src/main/resources/logo.png \
+            --java-options "--add-opens javafx.graphics/com.sun.glass.ui=ALL-UNNAMED"
+      
+      - name: Upload DMG to Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: "SDS Incident Tracker-1.0.0.dmg"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   build-windows:
     runs-on: windows-latest
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
       
-    - name: Setup Java 21
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'temurin'
-        java-version: '21'
-        
-    - name: Build with Maven
-      run: mvn clean package
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
       
-    - name: Create EXE
-      run: |
-        jpackage `
-          --input target `
-          --name "SDS Incident Tracker" `
-          --main-jar incident-tracker-1.0-SNAPSHOT.jar `
-          --main-class com.sdsweather.Launcher `
-          --type exe `
-          --dest target `
-          --app-version 1.0 `
-          --vendor "SDS Weather" `
-          --win-dir-chooser `
-          --win-menu `
-          --win-shortcut
-          
-    - name: Upload EXE
-      uses: actions/upload-artifact@v4
-      with:
-        name: SDS-Incident-Tracker-Windows
-        path: target/*.exe
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      
+      - name: Build with Maven
+        run: mvn clean package -DskipTests
+      
+      - name: Build EXE with jpackage
+        run: |
+          jpackage `
+            --input target/ `
+            --name "SDS Incident Tracker" `
+            --main-jar incident-tracker-1.0-SNAPSHOT.jar `
+            --main-class com.sdsweather.Launcher `
+            --type exe `
+            --app-version "1.0.0" `
+            --vendor "SDS Weather" `
+            --copyright "Copyright 2026 SDS Weather" `
+            --win-per-user-install `
+            --win-dir-chooser `
+            --win-menu `
+            --win-shortcut
+      
+      - name: Upload EXE to Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: "SDS Incident Tracker-1.0.0.exe"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
