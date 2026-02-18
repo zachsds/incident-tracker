@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
  * @version 1.0
  * @since 2026-02-16
  */
+
 public class AnalyticsPage extends VBox {
 
     public AnalyticsPage() {
@@ -152,7 +153,7 @@ public class AnalyticsPage extends VBox {
 
         TextArea insightsText = new TextArea();
         insightsText.setEditable(false);
-        insightsText.setPrefHeight(150);
+        insightsText.setPrefHeight(250);  // Increased height for better readability
         insightsText.setWrapText(true);
 
         // Load data function
@@ -377,7 +378,6 @@ public class AnalyticsPage extends VBox {
     }
 
     // Helper classes for table data
-    /** Data transfer object for component failure frequency table rows. */
     public static class ComponentFailureData {
         int rank;
         String componentName;
@@ -385,7 +385,6 @@ public class AnalyticsPage extends VBox {
         double percentOfTotal;
     }
 
-    /** Data transfer object for the most problematic units table rows. */
     public static class UnitIncidentData {
         int rank;
         String unitName;

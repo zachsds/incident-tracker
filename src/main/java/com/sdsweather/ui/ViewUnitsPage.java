@@ -200,7 +200,12 @@ public class ViewUnitsPage extends VBox {
         });
         createdCol.setPrefWidth(120);
 
-        unitTable.getColumns().addAll(selectCol, typeCol, identifierCol, createdCol);
+        // UUID column
+        TableColumn<Unit, String> uuidCol = new TableColumn<>("UUID");
+        uuidCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().unitId));
+        uuidCol.setPrefWidth(280);
+
+        unitTable.getColumns().addAll(selectCol, typeCol, identifierCol, createdCol, uuidCol);
         unitTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         // Double-click to view details

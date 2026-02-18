@@ -5,22 +5,29 @@ import com.sdsweather.repository.ComponentCategoryRepository;
 import com.sdsweather.repository.ComponentRepository;
 import com.sdsweather.repository.UserRepository;
 import com.sdsweather.security.SessionManager;
+import com.sdsweather.update.UpdateChecker;
+import com.sdsweather.update.UpdateDialog;
 
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
+import java.io.InputStream;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * SettingsPage - System configuration and administration interface.
  *
  * Provides component category and component management for all users.
  * Admin users also get access to user management (add, reset password,
- * delete) and the audit log viewer.
+ * delete) and the audit log viewer. Includes application update checking
+ * with manual trigger and version display.
  *
  * Admin-only sections are conditionally rendered based on SessionManager.isAdmin().
  *
@@ -351,6 +358,71 @@ public class SettingsPage extends VBox {
         HBox componentRow = new HBox(10, categorySelect, newComponentName, addComponent);
         HBox deleteRow = new HBox(10, deleteComponent, deleteCategory);
 
+        // ===== UPDATE SECTION =====
+        Label updateTitle = new Label("Application Updates");
+        updateTitle.setFont(Font.font(null, FontWeight.BOLD, 14));
+
+        // Get current version from version.properties
+        String currentVersion = getCurrentVersion();
+        Label versionLabel = new Label("Current Version: " + currentVersion);
+        versionLabel.setTextFill(Color.web("#e74c3c"));  // Red text for visibility
+        versionLabel.setFont(Font.font(null, FontWeight.BOLD, 14));
+
+        Button checkUpdateBtn = new Button("Check for Updates");
+        checkUpdateBtn.setOnAction(e -> {
+            // Disable button during check to prevent multiple requests
+            checkUpdateBtn.setDisable(true);
+            checkUpdateBtn.setText("Checking...");
+
+            // Run update check on background thread to avoid blocking UI
+            new Thread(() -> {
+                try {
+                    UpdateChecker.UpdateInfo updateInfo = UpdateChecker.checkForUpdates();
+
+                    Platform.runLater(() -> {
+                        // Re-enable button after check completes
+                        checkUpdateBtn.setDisable(false);
+                        checkUpdateBtn.setText("Check for Updates");
+
+                        if (updateInfo == null) {
+                            // Update check failed (network issue, GitHub API down, etc.)
+                            Alert error = new Alert(Alert.AlertType.ERROR);
+                            error.setTitle("Update Check Failed");
+                            error.setHeaderText("Could not check for updates");
+                            error.setContentText("Please check your internet connection and try again.");
+                            error.showAndWait();
+                        } else if (updateInfo.updateAvailable) {
+                            // New version available - show update dialog
+                            UpdateDialog dialog = new UpdateDialog(updateInfo);
+                            dialog.showAndWait();
+                        } else {
+                            // Already on latest version
+                            Alert upToDate = new Alert(Alert.AlertType.INFORMATION);
+                            upToDate.setTitle("No Updates Available");
+                            upToDate.setHeaderText("You're up to date!");
+                            upToDate.setContentText("You are running the latest version (" + currentVersion + ").");
+                            upToDate.showAndWait();
+                        }
+                    });
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    Platform.runLater(() -> {
+                        checkUpdateBtn.setDisable(false);
+                        checkUpdateBtn.setText("Check for Updates");
+
+                        Alert error = new Alert(Alert.AlertType.ERROR);
+                        error.setTitle("Error");
+                        error.setHeaderText("Update check failed");
+                        error.setContentText(ex.getMessage());
+                        error.showAndWait();
+                    });
+                }
+            }).start();
+        });
+
+        HBox updateRow = new HBox(15, checkUpdateBtn, versionLabel);
+
         // Admin-only audit log button
         VBox bottomSection = new VBox(10);
         if (SessionManager.isAdmin()) {
@@ -368,7 +440,30 @@ public class SettingsPage extends VBox {
                 componentRow,
                 componentList,
                 deleteRow,
+                new Separator(),
+                updateTitle,
+                updateRow,
+                new Separator(),
                 bottomSection
         );
+    }
+
+    /**
+     * Reads the current version from version.properties.
+     * 
+     * @return Current version string or "Unknown" if not found
+     */
+    private String getCurrentVersion() {
+        try (InputStream input = getClass().getResourceAsStream("/version.properties")) {
+            if (input == null) {
+                return "Unknown";
+            }
+            Properties props = new Properties();
+            props.load(input);
+            return props.getProperty("version", "Unknown");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Unknown";
+        }
     }
 }
