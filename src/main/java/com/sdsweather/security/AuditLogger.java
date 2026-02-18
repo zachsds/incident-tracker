@@ -18,6 +18,8 @@ import java.net.http.HttpResponse;
  * @author Zachary Sneed
  * @version 1.0
  * @since 2026-02-16
+ * 
+ * 
  */
 public class AuditLogger {
 
