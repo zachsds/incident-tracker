@@ -48,7 +48,9 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: "SDS Incident Tracker-1.0.0.dmg"
+          files: |
+            SDS Incident Tracker-1.0.0.dmg
+            target/incident-tracker-1.0-SNAPSHOT.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -89,7 +91,8 @@ jobs:
             --win-per-user-install `
             --win-dir-chooser `
             --win-menu `
-            --win-shortcut
+            --win-shortcut `
+            --icon src/main/resources/logo.ico
       
       - name: Upload EXE to Release
         uses: softprops/action-gh-release@v1
