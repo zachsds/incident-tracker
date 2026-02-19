@@ -2,6 +2,8 @@ package com.sdsweather.ui;
 
 import com.sdsweather.navigation.Navigator;
 import com.sdsweather.security.SessionManager;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -21,7 +23,7 @@ import javafx.scene.layout.Priority;
  * Features:
  * - Company branding with logo display
  * - Role-based access to administrative features
- * - Clean, card-based navigation layout
+ * - Clean, card-based navigation layout with FontAwesome icons
  * - User identification and logout functionality
  * 
  * @author Zachary Sneed
@@ -110,7 +112,7 @@ public class LandingPage extends VBox {
      * 
      * Navigation cards are organized in a responsive grid layout, with each
      * card representing a major feature of the application. Cards include
-     * icons (represented by emoji), titles, and descriptions.
+     * FontAwesome icons, titles, and descriptions.
      * 
      * @return VBox containing all navigation cards
      */
@@ -128,21 +130,21 @@ public class LandingPage extends VBox {
         
         // First row: Primary operations
         VBox addUnitCard = createNavCard(
-            "➕", 
+            FontAwesomeIcon.PLUS_CIRCLE, 
             "Add Unit", 
             "Register new stock or deployed units",
             () -> Navigator.show(new AddUnitPage())
         );
         
         VBox viewUnitsCard = createNavCard(
-            "📋", 
+            FontAwesomeIcon.LIST, 
             "View Units", 
             "Browse and manage all units",
             () -> Navigator.show(new ViewUnitsPage())
         );
         
         VBox analysisCard = createNavCard(
-            "📊", 
+            FontAwesomeIcon.BAR_CHART, 
             "Analysis", 
             "View incidents and analytics",
             () -> Navigator.show(new AnalysisPage())
@@ -152,14 +154,14 @@ public class LandingPage extends VBox {
         
         // Second row: Settings and logout
         VBox settingsCard = createNavCard(
-            "⚙️", 
+            FontAwesomeIcon.COG, 
             "Settings", 
             "Manage components and users",
             () -> Navigator.show(new SettingsPage())
         );
         
         VBox logoutCard = createNavCard(
-            "🚪", 
+            FontAwesomeIcon.SIGN_OUT, 
             "Logout", 
             "End your session",
             () -> {
@@ -175,18 +177,18 @@ public class LandingPage extends VBox {
     }
 
     /**
-     * Creates an individual navigation card with icon, title, and action.
+     * Creates an individual navigation card with FontAwesome icon, title, and action.
      * 
      * Each card is a clickable white container with hover effects that
      * navigates to a specific feature when clicked.
      * 
-     * @param icon The emoji icon to display
+     * @param icon The FontAwesome icon to display
      * @param title The card title
      * @param description Brief description of the feature
      * @param action The action to perform when clicked
      * @return VBox styled as a navigation card
      */
-    private VBox createNavCard(String icon, String title, String description, Runnable action) {
+    private VBox createNavCard(FontAwesomeIcon icon, String title, String description, Runnable action) {
         VBox card = new VBox(15);
         card.setAlignment(Pos.CENTER);
         card.setPrefWidth(230);
@@ -199,9 +201,10 @@ public class LandingPage extends VBox {
             "-fx-cursor: hand;"
         );
         
-        // Icon label
-        Label iconLabel = new Label(icon);
-        iconLabel.setStyle("-fx-font-size: 48px;");
+        // FontAwesome icon
+        FontAwesomeIconView iconView = new FontAwesomeIconView(icon);
+        iconView.setGlyphSize(48);  // Use setGlyphSize instead of setSize
+        iconView.setFill(javafx.scene.paint.Color.web(AppStyles.PRIMARY_COLOR));
         
         // Title label
         Label titleLabel = new Label(title);
@@ -221,7 +224,7 @@ public class LandingPage extends VBox {
         descLabel.setWrapText(true);
         descLabel.setMaxWidth(200);
         
-        card.getChildren().addAll(iconLabel, titleLabel, descLabel);
+        card.getChildren().addAll(iconView, titleLabel, descLabel);
         
         // Hover effects
         card.setOnMouseEntered(e -> card.setStyle(
