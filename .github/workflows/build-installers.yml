@@ -41,7 +41,7 @@ jobs:
             --vendor "SDS Weather" \
             --copyright "Copyright 2026 SDS Weather" \
             --mac-package-name "SDS Incident Tracker" \
-            --icon src/main/resources/logo.png \
+            --icon src/main/resources/appicon.icns \
             --java-options "--add-opens javafx.graphics/com.sun.glass.ui=ALL-UNNAMED"
       
       - name: Upload DMG to Release
