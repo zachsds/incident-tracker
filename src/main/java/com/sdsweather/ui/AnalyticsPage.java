@@ -7,6 +7,7 @@ import com.sdsweather.repository.IncidentRepository;
 import com.sdsweather.repository.IncidentComponentRepository;
 import com.sdsweather.repository.ComponentRepository;
 import com.sdsweather.repository.UnitRepository;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
@@ -14,6 +15,17 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.element.Cell;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.io.font.constants.StandardFonts;
+
+import java.io.FileOutputStream;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -32,12 +44,12 @@ import java.util.stream.Collectors;
  *   - Most problematic units table (top 10)
  *   - Component co-occurrence analysis (which parts fail together)
  *   - Auto-generated key insights
+ *   - PDF report export functionality
  *
  * @author Zachary Sneed
  * @version 1.0
  * @since 2026-02-16
  */
-
 public class AnalyticsPage extends VBox {
 
     public AnalyticsPage() {
@@ -345,8 +357,49 @@ public class AnalyticsPage extends VBox {
         // Initial load
         loadAnalytics.run();
 
+        // Export PDF button
+        Button exportPdf = new Button("Export PDF Report");
+        exportPdf.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;");
+        exportPdf.setOnAction(e -> {
+            try {
+                // Get current analytics data
+                LocalDate start = startDate.getValue();
+                LocalDate end = endDate.getValue();
+                
+                // Generate PDF
+                String filename = "Analytics_Report_" + start + "_to_" + end + ".pdf";
+                String filepath = System.getProperty("user.home") + "/Desktop/" + filename;
+                
+                generatePdfReport(filepath, start, end, 
+                    componentTable.getItems(), 
+                    unitsTable.getItems(),
+                    coOccurrenceText.getText(),
+                    insightsText.getText(),
+                    totalIncidentsLabel.getText(),
+                    highSeverityLabel.getText(),
+                    mediumSeverityLabel.getText(),
+                    lowSeverityLabel.getText());
+                
+                Alert success = new Alert(Alert.AlertType.INFORMATION);
+                success.setTitle("Export Complete");
+                success.setHeaderText("PDF report generated successfully");
+                success.setContentText("Saved to: " + filepath);
+                success.showAndWait();
+                
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                Alert error = new Alert(Alert.AlertType.ERROR);
+                error.setTitle("Export Failed");
+                error.setHeaderText("Failed to generate PDF");
+                error.setContentText(ex.getMessage());
+                error.showAndWait();
+            }
+        });
+
         Button back = new Button("Back");
         back.setOnAction(e -> Navigator.show(new LandingPage()));
+        back.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;");
+        HBox buttonRow = new HBox(10, exportPdf, back);
 
         content.getChildren().addAll(
                 title,
@@ -366,7 +419,7 @@ public class AnalyticsPage extends VBox {
                 insightsTitle,
                 insightsText,
                 new Separator(),
-                back
+                buttonRow
         );
 
         // Wrap content in ScrollPane
@@ -377,7 +430,149 @@ public class AnalyticsPage extends VBox {
         getChildren().add(scrollPane);
     }
 
+    /**
+     * Generates a professional PDF report of the analytics data.
+     *
+     * @param filepath Path where the PDF will be saved
+     * @param startDate Start date of the report period
+     * @param endDate End date of the report period
+     * @param componentData Component failure data table
+     * @param unitData Unit incident data table
+     * @param coOccurrenceText Component co-occurrence text
+     * @param insightsText Key insights text
+     * @param totalLabel Total incidents label text
+     * @param highLabel HIGH severity label text
+     * @param mediumLabel MEDIUM severity label text
+     * @param lowLabel LOW severity label text
+     * @throws Exception If PDF generation fails
+     */
+    private void generatePdfReport(String filepath, LocalDate startDate, LocalDate endDate,
+                                   ObservableList<ComponentFailureData> componentData,
+                                   ObservableList<UnitIncidentData> unitData,
+                                   String coOccurrenceText, String insightsText,
+                                   String totalLabel, String highLabel, 
+                                   String mediumLabel, String lowLabel) throws Exception {
+        
+        // Initialize PDF writer and document
+        PdfWriter writer = new PdfWriter(new FileOutputStream(filepath));
+        PdfDocument pdf = new PdfDocument(writer);
+        Document document = new Document(pdf);
+        
+        // Set up fonts for headings and body text
+        PdfFont boldFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD);
+        PdfFont normalFont = PdfFontFactory.createFont(StandardFonts.HELVETICA);
+        
+        // Add report title
+        Paragraph title = new Paragraph("SDS Weather Analytics Report")
+            .setFont(boldFont)
+            .setFontSize(20);
+        document.add(title);
+        
+        // Add date range subtitle
+        Paragraph dateRange = new Paragraph("Report Period: " + startDate + " to " + endDate)
+            .setFont(normalFont)
+            .setFontSize(12);
+        document.add(dateRange);
+        
+        document.add(new Paragraph("\n"));
+        
+        // Summary Statistics section
+        Paragraph summaryTitle = new Paragraph("Summary Statistics")
+            .setFont(boldFont)
+            .setFontSize(16);
+        document.add(summaryTitle);
+        
+        document.add(new Paragraph(totalLabel).setFont(normalFont).setFontSize(12));
+        document.add(new Paragraph(highLabel).setFont(normalFont).setFontSize(12));
+        document.add(new Paragraph(mediumLabel).setFont(normalFont).setFontSize(12));
+        document.add(new Paragraph(lowLabel).setFont(normalFont).setFontSize(12));
+        
+        document.add(new Paragraph("\n"));
+        
+        // Component Failure Frequency section
+        Paragraph componentTitle = new Paragraph("Component Failure Frequency")
+            .setFont(boldFont)
+            .setFontSize(16);
+        document.add(componentTitle);
+        
+        // Create table with 4 columns: rank, component name, failures, percentage
+        Table componentTable = new Table(new float[]{1, 5, 2, 2});
+        componentTable.setWidth(500);
+        
+        // Add table header row
+        componentTable.addCell(new Cell().add(new Paragraph("#").setFont(boldFont)));
+        componentTable.addCell(new Cell().add(new Paragraph("Component").setFont(boldFont)));
+        componentTable.addCell(new Cell().add(new Paragraph("Failures").setFont(boldFont)));
+        componentTable.addCell(new Cell().add(new Paragraph("% of Total").setFont(boldFont)));
+        
+        // Add data rows from component failure table
+        for (ComponentFailureData data : componentData) {
+            componentTable.addCell(new Cell().add(new Paragraph(String.valueOf(data.rank)).setFont(normalFont)));
+            componentTable.addCell(new Cell().add(new Paragraph(data.componentName).setFont(normalFont)));
+            componentTable.addCell(new Cell().add(new Paragraph(String.valueOf(data.failureCount)).setFont(normalFont)));
+            componentTable.addCell(new Cell().add(new Paragraph(String.format("%.1f%%", data.percentOfTotal)).setFont(normalFont)));
+        }
+        
+        document.add(componentTable);
+        document.add(new Paragraph("\n"));
+        
+        // Most Problematic Units section
+        Paragraph unitsTitle = new Paragraph("Units with Most Incidents")
+            .setFont(boldFont)
+            .setFontSize(16);
+        document.add(unitsTitle);
+        
+        // Create table with 4 columns: rank, unit name, incidents, high severity count
+        Table unitsTable = new Table(new float[]{1, 5, 2, 2});
+        unitsTable.setWidth(500);
+        
+        // Add table header row
+        unitsTable.addCell(new Cell().add(new Paragraph("#").setFont(boldFont)));
+        unitsTable.addCell(new Cell().add(new Paragraph("Unit").setFont(boldFont)));
+        unitsTable.addCell(new Cell().add(new Paragraph("Incidents").setFont(boldFont)));
+        unitsTable.addCell(new Cell().add(new Paragraph("HIGH").setFont(boldFont)));
+        
+        // Add data rows from units table
+        for (UnitIncidentData data : unitData) {
+            unitsTable.addCell(new Cell().add(new Paragraph(String.valueOf(data.rank)).setFont(normalFont)));
+            unitsTable.addCell(new Cell().add(new Paragraph(data.unitName).setFont(normalFont)));
+            unitsTable.addCell(new Cell().add(new Paragraph(String.valueOf(data.incidentCount)).setFont(normalFont)));
+            unitsTable.addCell(new Cell().add(new Paragraph(String.valueOf(data.highCount)).setFont(normalFont)));
+        }
+        
+        document.add(unitsTable);
+        document.add(new Paragraph("\n"));
+        
+        // Component Co-occurrence section
+        Paragraph coOccurrenceTitle = new Paragraph("Components That Fail Together")
+            .setFont(boldFont)
+            .setFontSize(16);
+        document.add(coOccurrenceTitle);
+        
+        Paragraph coOccurrence = new Paragraph(coOccurrenceText)
+            .setFont(normalFont)
+            .setFontSize(10);
+        document.add(coOccurrence);
+        
+        document.add(new Paragraph("\n"));
+        
+        // Key Insights section
+        Paragraph insightsTitle = new Paragraph("Key Insights")
+            .setFont(boldFont)
+            .setFontSize(16);
+        document.add(insightsTitle);
+        
+        Paragraph insights = new Paragraph(insightsText)
+            .setFont(normalFont)
+            .setFontSize(10);
+        document.add(insights);
+        
+        // Close and save the PDF document
+        document.close();
+    }
+
     // Helper classes for table data
+    /** Data transfer object for component failure frequency table rows. */
     public static class ComponentFailureData {
         int rank;
         String componentName;
