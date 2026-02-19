@@ -31,6 +31,7 @@ import java.util.Properties;
 public class UpdateDialog extends Dialog<ButtonType> {
 
     private static final String SKIP_COUNT_FILE = System.getProperty("user.home") + "/.sdsweather_update_skips";
+    private static final String GITHUB_TOKEN = "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";
     private static final HttpClient CLIENT = HttpClient.newHttpClient();
 
     /**
@@ -159,9 +160,10 @@ public class UpdateDialog extends Dialog<ButtonType> {
         // Download and install on background thread
         new Thread(() -> {
             try {
-                // Download the new JAR
+                // Download the new JAR with authentication
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(downloadUrl))
+                        .header("Authorization", "Bearer " + GITHUB_TOKEN)
                         .GET()
                         .build();
 
