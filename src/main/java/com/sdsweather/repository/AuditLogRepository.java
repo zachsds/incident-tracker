@@ -11,12 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * AuditLogRepository - Retrieves audit log entries from the REST API.
+ * AuditLogRepository - Retrieves and manages audit log entries from the REST API.
  *
- * Supports date range and limit filtering. Used exclusively by AuditLogPage
- * to display the system audit trail to administrators.
+ * Supports date range and limit filtering for viewing logs, plus delete operations
+ * for individual entries, multiple entries, or entire date ranges. Used exclusively
+ * by AuditLogPage to display the system audit trail to administrators.
  *
- * API Endpoint: GET https://192.168.0.237:3000/audit-logs
+ * API Endpoint: GET/DELETE https://192.168.0.237:3000/audit-logs
  *
  * @author Zachary Sneed
  * @version 1.0
@@ -27,7 +28,6 @@ public class AuditLogRepository {
     private static final String BASE = "https://192.168.0.237:3000";
     private static final HttpClient CLIENT = SSLConfig.createHttpClient();
 
-    /** Data transfer object representing a single audit log entry. */
     public static class AuditLog {
         public String id;
         public String userId;
@@ -39,15 +39,6 @@ public class AuditLogRepository {
         public String timestamp;
     }
 
-    /**
-     * Retrieves audit log entries filtered by date range and limit.
-     *
-     * @param startDate ISO date-time string for range start (or null)
-     * @param endDate   ISO date-time string for range end (or null)
-     * @param limit     Maximum number of entries to return (or null for default)
-     * @return List of audit log entries matching the criteria
-     * @throws Exception If the API request fails
-     */
     public static List<AuditLog> getAll(String startDate, String endDate, Integer limit) throws Exception {
 
         StringBuilder url = new StringBuilder(BASE + "/audit-logs?");
@@ -108,5 +99,52 @@ public class AuditLogRepository {
         }
 
         return logs;
+    }
+
+    /**
+     * Deletes a single audit log entry by ID.
+     *
+     * @param logId The audit log ID to delete
+     * @throws Exception If the API request fails
+     */
+    public static void delete(String logId) throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE + "/audit-logs/" + logId))
+                .header("Authorization", SessionManager.getAuthHeader())
+                .DELETE()
+                .build();
+
+        HttpResponse<String> response =
+                CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() != 200) {
+            throw new RuntimeException("Delete audit log failed: " + response.body());
+        }
+    }
+
+    /**
+     * Deletes all audit logs within a date range.
+     *
+     * @param startDate ISO date-time string for range start
+     * @param endDate   ISO date-time string for range end
+     * @throws Exception If the API request fails
+     */
+    public static void deleteByDateRange(String startDate, String endDate) throws Exception {
+        StringBuilder url = new StringBuilder(BASE + "/audit-logs?");
+        if (startDate != null) url.append("startDate=").append(startDate).append("&");
+        if (endDate != null) url.append("endDate=").append(endDate).append("&");
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url.toString()))
+                .header("Authorization", SessionManager.getAuthHeader())
+                .DELETE()
+                .build();
+
+        HttpResponse<String> response =
+                CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() != 200) {
+            throw new RuntimeException("Delete audit logs by date range failed: " + response.body());
+        }
     }
 }

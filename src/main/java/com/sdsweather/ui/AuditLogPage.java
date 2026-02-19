@@ -10,8 +10,26 @@ import javafx.scene.layout.HBox;
 import javafx.beans.property.SimpleStringProperty;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * AuditLogPage - Admin-only view of the system audit trail.
+ *
+ * Displays a filterable log of all user actions with date range and action
+ * type filters. Access is restricted to administrators. Accessible via
+ * Settings → View Audit Log.
+ * 
+ * Features:
+ * - Date range filtering
+ * - Action type filtering
+ * - Multi-select with checkboxes
+ * - Delete options: selected, checked, or entire date range
+ *
+ * @author Zachary Sneed
+ * @version 1.0
+ * @since 2026-02-16
+ */
 public class AuditLogPage extends VBox {
 
     public AuditLogPage() {
