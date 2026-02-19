@@ -32,7 +32,10 @@ public class UpdateDialog extends Dialog<ButtonType> {
 
     private static final String SKIP_COUNT_FILE = System.getProperty("user.home") + "/.sdsweather_update_skips";
     private static final String GITHUB_TOKEN = "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";
-    private static final HttpClient CLIENT = HttpClient.newHttpClient();
+    private static final HttpClient CLIENT = HttpClient.newBuilder()
+        .followRedirects(HttpClient.Redirect.NEVER)
+        .build();
+
 
     /**
      * Shows the update dialog with current skip count enforcement.
@@ -160,12 +163,11 @@ public class UpdateDialog extends Dialog<ButtonType> {
         // Download and install on background thread
         new Thread(() -> {
             try {
-                // Download the new JAR with authentication
-                // GitHub asset downloads require token as URL parameter for private repos
-                String authenticatedUrl = downloadUrl + "?access_token=" + GITHUB_TOKEN;
-                
+                // Download the new JAR with proper header authentication
                 HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(authenticatedUrl))
+                        .uri(URI.create(downloadUrl))
+                        .header("Authorization", "Bearer " + GITHUB_TOKEN)
+                        .header("Accept", "application/octet-stream")
                         .GET()
                         .build();
 
