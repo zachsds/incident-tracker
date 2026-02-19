@@ -161,9 +161,11 @@ public class UpdateDialog extends Dialog<ButtonType> {
         new Thread(() -> {
             try {
                 // Download the new JAR with authentication
+                // GitHub asset downloads require token as URL parameter for private repos
+                String authenticatedUrl = downloadUrl + "?access_token=" + GITHUB_TOKEN;
+                
                 HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(downloadUrl))
-                        .header("Authorization", "Bearer " + GITHUB_TOKEN)
+                        .uri(URI.create(authenticatedUrl))
                         .GET()
                         .build();
 
