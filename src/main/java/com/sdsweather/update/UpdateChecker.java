@@ -132,18 +132,27 @@ public class UpdateChecker {
 
             String body = response.body();
 
-            // Find the browser_download_url for the .jar file
-            int assetsIndex = body.indexOf("\"assets\"");
-            if (assetsIndex == -1) return null;
+            // Find all browser_download_url entries and look for .jar specifically
+            int searchIndex = 0;
+            while (true) {
+                int urlIndex = body.indexOf("\"browser_download_url\"", searchIndex);
+                if (urlIndex == -1) return null;
 
-            // Look for browser_download_url after assets
-            int urlIndex = body.indexOf("\"browser_download_url\"", assetsIndex);
-            if (urlIndex == -1) return null;
+                int startQuote = body.indexOf("\"", urlIndex + 22);
+                int endQuote = body.indexOf("\"", startQuote + 1);
+                
+                if (startQuote == -1 || endQuote == -1) return null;
 
-            int startQuote = body.indexOf("\"", urlIndex + 22);
-            int endQuote = body.indexOf("\"", startQuote + 1);
+                String url = body.substring(startQuote + 1, endQuote);
 
-            return body.substring(startQuote + 1, endQuote);
+                // Check if this URL points to a .jar file
+                if (url.toLowerCase().endsWith(".jar")) {
+                    return url;
+                }
+
+                // Move search index forward
+                searchIndex = endQuote + 1;
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
