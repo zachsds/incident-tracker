@@ -31,7 +31,9 @@ import java.util.Properties;
 public class UpdateDialog extends Dialog<ButtonType> {
 
     private static final String SKIP_COUNT_FILE = System.getProperty("user.home") + "/.sdsweather_update_skips";
-    private static final HttpClient CLIENT = HttpClient.newHttpClient();
+    private static final HttpClient CLIENT = HttpClient.newBuilder()
+        .followRedirects(HttpClient.Redirect.ALWAYS)
+        .build();
 
     /**
      * Shows the update dialog with current skip count enforcement.
