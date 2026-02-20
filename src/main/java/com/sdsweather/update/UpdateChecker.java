@@ -21,7 +21,6 @@ import java.util.Properties;
 public class UpdateChecker {
 
     private static final String GITHUB_API_URL = "https://api.github.com/repos/zachsds/incident-tracker/releases/latest";
-    private static final String GITHUB_TOKEN = "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";
     private static final HttpClient CLIENT = HttpClient.newHttpClient();
 
     /**
@@ -81,7 +80,6 @@ public class UpdateChecker {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(GITHUB_API_URL))
                     .header("Accept", "application/vnd.github.v3+json")
-                    .header("Authorization", "Bearer " + GITHUB_TOKEN)
                     .GET()
                     .build();
 
@@ -123,7 +121,6 @@ public class UpdateChecker {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(GITHUB_API_URL))
                     .header("Accept", "application/vnd.github.v3+json")
-                    .header("Authorization", "Bearer " + GITHUB_TOKEN)
                     .GET()
                     .build();
 
