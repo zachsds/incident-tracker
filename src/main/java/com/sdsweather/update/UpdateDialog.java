@@ -151,6 +151,9 @@ public class UpdateDialog extends Dialog<ButtonType> {
      * @param downloadUrl GitHub download URL for the new JAR
      */
     private void installUpdate(String downloadUrl) {
+        System.out.println("=== UPDATE STARTED ===");
+        System.out.println("Download URL: " + downloadUrl);
+        
         // Show progress dialog
         Alert progress = new Alert(Alert.AlertType.INFORMATION);
         progress.setTitle("Installing Update");
@@ -160,16 +163,21 @@ public class UpdateDialog extends Dialog<ButtonType> {
 
         // Download and install on background thread
         new Thread(() -> {
+            System.out.println("=== DOWNLOAD THREAD STARTED ===");
             try {
-                // Download the new JAR
-                // GitHub asset downloads require token as URL parameter for private repos
+                System.out.println("About to create HTTP request...");
                 
+                // Download the new JAR
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(downloadUrl))
                         .GET()
                         .build();
 
-                HttpResponse<InputStream> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofInputStream());
+                HttpResponse<byte[]> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofByteArray());
+
+                System.out.println("Response status: " + response.statusCode());
+                System.out.println("Content-Type: " + response.headers().firstValue("Content-Type").orElse("unknown"));
+                System.out.println("Final URI: " + response.uri());
 
                 if (response.statusCode() != 200) {
                     showError("Download failed with status: " + response.statusCode());
@@ -188,7 +196,7 @@ public class UpdateDialog extends Dialog<ButtonType> {
                 File backupJar = new File(currentJar.getParent(), "incident-tracker-backup.jar");
 
                 // Save the downloaded JAR
-                Files.copy(response.body(), newJar.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                Files.write(newJar.toPath(), response.body());
 
                 // Backup the current JAR
                 if (currentJar.exists()) {

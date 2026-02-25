@@ -167,15 +167,6 @@ public class AuditLogPage extends VBox {
         Button deleteButton = new Button("Delete");
         deleteButton.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white;");
         deleteButton.setOnAction(e -> {
-            // Check if table has any data
-            if (table.getItems().isEmpty()) {
-                Alert warning = new Alert(Alert.AlertType.WARNING);
-                warning.setTitle("No Data");
-                warning.setHeaderText("No audit logs to delete");
-                warning.setContentText("The audit log is empty for the selected date range.");
-                warning.showAndWait();
-                return;
-            }
             
             // Show options dialog
             Alert optionsDialog = new Alert(Alert.AlertType.CONFIRMATION);
