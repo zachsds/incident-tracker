@@ -237,15 +237,32 @@ public class UpdateDialog extends Dialog<ButtonType> {
 
     /**
      * Restarts the application by launching a new instance and exiting the current one.
+     * Handles macOS .app bundles, Windows .exe installers, and standalone JAR files.
      * 
      * @param jarFile The JAR file to execute
      */
     private void restartApplication(File jarFile) {
         try {
-            String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
-            ProcessBuilder builder = new ProcessBuilder(javaBin, "-jar", jarFile.getAbsolutePath());
+            String jarPath = jarFile.getAbsolutePath();
+            String os = System.getProperty("os.name").toLowerCase();
+            
+            ProcessBuilder builder;
+            
+            if (os.contains("mac") && jarPath.contains(".app/Contents/")) {
+                // Running from macOS .app bundle - use 'open' command to restart the app
+                String appPath = jarPath.substring(0, jarPath.indexOf(".app/") + 4);
+                builder = new ProcessBuilder("open", appPath);
+            } else if (os.contains("win") && jarPath.contains("\\app\\")) {
+                // Running from Windows jpackage .exe - find and restart the .exe
+                String exePath = jarPath.substring(0, jarPath.indexOf("\\app\\")) + ".exe";
+                builder = new ProcessBuilder(exePath);
+            } else {
+                // Running from standalone JAR - use java -jar
+                String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
+                builder = new ProcessBuilder(javaBin, "-jar", jarFile.getAbsolutePath());
+            }
+            
             builder.start();
-
             System.exit(0);
 
         } catch (Exception e) {
