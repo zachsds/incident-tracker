@@ -7,13 +7,12 @@ import javafx.scene.layout.VBox;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.FileWriter;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Properties;
 
@@ -205,17 +204,33 @@ public class UpdateDialog extends Dialog<ButtonType> {
             if (os.contains("mac") && jarPath.contains(".app/Contents/")) {
                 String appPath = jarPath.substring(0, jarPath.indexOf(".app/") + 4);
                 builder = new ProcessBuilder("open", "-n", appPath);
+                builder.start();
+                Thread.sleep(500);
+                System.exit(0);
             } else if (os.contains("win") && jarPath.contains("\\app\\")) {
-                String exePath = jarPath.substring(0, jarPath.indexOf("\\app\\")) + ".exe";
-                builder = new ProcessBuilder(exePath);
+                // Windows - create batch script to wait, then restart
+                String appDir = jarPath.substring(0, jarPath.indexOf("\\app\\"));
+                String exePath = appDir + ".exe";
+                
+                File batchFile = new File(System.getProperty("java.io.tmpdir"), "restart_sds.bat");
+                try (FileWriter writer = new FileWriter(batchFile)) {
+                    writer.write("@echo off\n");
+                    writer.write("timeout /t 2 /nobreak > nul\n");
+                    writer.write("start \"\" \"" + exePath + "\"\n");
+                    writer.write("del \"%~f0\"\n");
+                }
+                
+                builder = new ProcessBuilder("cmd.exe", "/c", batchFile.getAbsolutePath());
+                builder.start();
+                Thread.sleep(100);
+                System.exit(0);
             } else {
                 String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
                 builder = new ProcessBuilder(javaBin, "-jar", jarFile.getAbsolutePath());
+                builder.start();
+                Thread.sleep(500);
+                System.exit(0);
             }
-            
-            builder.start();
-            Thread.sleep(500);
-            System.exit(0);
 
         } catch (Exception e) {
             e.printStackTrace();
