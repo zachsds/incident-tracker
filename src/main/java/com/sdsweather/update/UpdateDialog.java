@@ -205,7 +205,7 @@ public class UpdateDialog extends Dialog<ButtonType> {
                 String appPath = jarPath.substring(0, jarPath.indexOf(".app/") + 4);
                 builder = new ProcessBuilder("open", "-n", appPath);
                 builder.start();
-                Thread.sleep(500);
+                Thread.sleep(2000);
                 System.exit(0);
             } else if (os.contains("win") && jarPath.contains("\\app\\")) {
                 // Windows - create batch script to wait, then restart
@@ -222,7 +222,7 @@ public class UpdateDialog extends Dialog<ButtonType> {
                 
                 builder = new ProcessBuilder("cmd.exe", "/c", batchFile.getAbsolutePath());
                 builder.start();
-                Thread.sleep(100);
+                Thread.sleep(2000);
                 System.exit(0);
             } else {
                 String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
