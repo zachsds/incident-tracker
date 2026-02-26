@@ -1,6 +1,8 @@
 package com.sdsweather.ui;
 
 import com.sdsweather.navigation.Navigator;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -29,12 +31,6 @@ import javafx.scene.layout.VBox;
  */
 public class AnalysisPage extends VBox {
 
-    /**
-     * Constructs the Analysis navigation page.
-     * 
-     * Creates a simple, focused interface for choosing between incident
-     * history viewing and analytics dashboards.
-     */
     public AnalysisPage() {
 
         setStyle(AppStyles.PAGE_BACKGROUND);
@@ -42,10 +38,8 @@ public class AnalysisPage extends VBox {
         setSpacing(30);
         setAlignment(Pos.CENTER);
 
-        // ===== HEADER =====
         HBox header = createHeader();
 
-        // ===== TITLE SECTION =====
         VBox titleSection = new VBox(10);
         titleSection.setAlignment(Pos.CENTER);
         
@@ -57,19 +51,18 @@ public class AnalysisPage extends VBox {
         
         titleSection.getChildren().addAll(title, subtitle);
 
-        // ===== NAVIGATION CARDS =====
         HBox cardRow = new HBox(30);
         cardRow.setAlignment(Pos.CENTER);
         
         VBox incidentHistoryCard = createAnalysisCard(
-            "📋",
+            FontAwesomeIcon.LIST,
             "Incident History",
             "View, filter, and manage all incidents across all units",
             () -> Navigator.show(new IncidentHistoryPage())
         );
         
         VBox analyticsCard = createAnalysisCard(
-            "📊",
+            FontAwesomeIcon.BAR_CHART,
             "Analytics Dashboard",
             "View component failure trends and pattern analysis",
             () -> Navigator.show(new AnalyticsPage())
@@ -77,7 +70,6 @@ public class AnalysisPage extends VBox {
         
         cardRow.getChildren().addAll(incidentHistoryCard, analyticsCard);
 
-        // ===== BACK BUTTON =====
         Button back = new Button("← Back to Main Menu");
         AppStyles.styleSecondaryButton(back);
         back.setOnAction(e -> Navigator.show(new LandingPage()));
@@ -85,11 +77,6 @@ public class AnalysisPage extends VBox {
         getChildren().addAll(header, titleSection, cardRow, back);
     }
 
-    /**
-     * Creates the page header with logo and title.
-     * 
-     * @return HBox containing header elements
-     */
     private HBox createHeader() {
         HBox header = new HBox(15);
         header.setAlignment(Pos.CENTER_LEFT);
@@ -111,16 +98,7 @@ public class AnalysisPage extends VBox {
         return header;
     }
 
-    /**
-     * Creates an individual analysis navigation card.
-     * 
-     * @param icon The emoji icon to display
-     * @param title The card title
-     * @param description Brief description of the feature
-     * @param action The action to perform when clicked
-     * @return VBox styled as a navigation card
-     */
-    private VBox createAnalysisCard(String icon, String title, String description, Runnable action) {
+    private VBox createAnalysisCard(FontAwesomeIcon icon, String title, String description, Runnable action) {
         VBox card = new VBox(20);
         card.setAlignment(Pos.CENTER);
         card.setPrefWidth(300);
@@ -133,11 +111,10 @@ public class AnalysisPage extends VBox {
             "-fx-cursor: hand;"
         );
         
-        // Icon
-        Label iconLabel = new Label(icon);
-        iconLabel.setStyle("-fx-font-size: 64px;");
+        FontAwesomeIconView iconView = new FontAwesomeIconView(icon);
+        iconView.setGlyphSize(64);
+        iconView.setFill(javafx.scene.paint.Color.web(AppStyles.PRIMARY_COLOR));
         
-        // Title
         Label titleLabel = new Label(title);
         titleLabel.setStyle(
             "-fx-font-size: 20px; " +
@@ -145,7 +122,6 @@ public class AnalysisPage extends VBox {
             "-fx-text-fill: " + AppStyles.DARK_TEXT + ";"
         );
         
-        // Description
         Label descLabel = new Label(description);
         descLabel.setStyle(
             "-fx-font-size: 13px; " +
@@ -155,9 +131,8 @@ public class AnalysisPage extends VBox {
         descLabel.setWrapText(true);
         descLabel.setMaxWidth(250);
         
-        card.getChildren().addAll(iconLabel, titleLabel, descLabel);
+        card.getChildren().addAll(iconView, titleLabel, descLabel);
         
-        // Hover effects
         card.setOnMouseEntered(e -> card.setStyle(
             "-fx-background-color: white; " +
             "-fx-background-radius: 10; " +

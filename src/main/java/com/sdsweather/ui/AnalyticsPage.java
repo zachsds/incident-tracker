@@ -7,12 +7,15 @@ import com.sdsweather.repository.IncidentRepository;
 import com.sdsweather.repository.IncidentComponentRepository;
 import com.sdsweather.repository.ComponentRepository;
 import com.sdsweather.repository.UnitRepository;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
 
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -57,14 +60,18 @@ public class AnalyticsPage extends VBox {
         setPadding(new Insets(20));
         setSpacing(15);
 
-        // Create a VBox for all content
         VBox content = new VBox(15);
         content.setPadding(new Insets(10));
 
+        // Title with icon
+        FontAwesomeIconView chartIcon = new FontAwesomeIconView(FontAwesomeIcon.BAR_CHART);
+        chartIcon.setGlyphSize(24);
+        chartIcon.setFill(javafx.scene.paint.Color.web("#3498db"));
+        
         Label title = new Label("Analytics Dashboard");
         title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+        title.setGraphic(chartIcon);
 
-        // Date range selector
         DatePicker startDate = new DatePicker(LocalDate.now().minusMonths(3));
         DatePicker endDate = new DatePicker(LocalDate.now());
         Button refresh = new Button("Refresh");
@@ -75,7 +82,6 @@ public class AnalyticsPage extends VBox {
                 refresh
         );
 
-        // Summary stats
         Label totalIncidentsLabel = new Label("Total Incidents: -");
         Label highSeverityLabel = new Label("HIGH Severity: -");
         highSeverityLabel.setTextFill(Color.RED);
@@ -91,90 +97,100 @@ public class AnalyticsPage extends VBox {
         statsGrid.add(mediumSeverityLabel, 2, 0);
         statsGrid.add(lowSeverityLabel, 3, 0);
 
-        // Component failure ranking table
         Label componentRankingTitle = new Label("Component Failure Frequency");
         componentRankingTitle.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
 
         TableView<ComponentFailureData> componentTable = new TableView<>();
         componentTable.setPrefHeight(300);
+        componentTable.setMaxWidth(Double.MAX_VALUE);
 
         TableColumn<ComponentFailureData, String> rankCol = new TableColumn<>("#");
         rankCol.setCellValueFactory(data -> 
             new javafx.beans.property.SimpleStringProperty(String.valueOf(data.getValue().rank)));
-        rankCol.setPrefWidth(40);
+        rankCol.setPrefWidth(60);
 
         TableColumn<ComponentFailureData, String> componentCol = new TableColumn<>("Component");
         componentCol.setCellValueFactory(data -> 
             new javafx.beans.property.SimpleStringProperty(data.getValue().componentName));
-        componentCol.setPrefWidth(250);
+        componentCol.setPrefWidth(400);
 
         TableColumn<ComponentFailureData, String> failureCountCol = new TableColumn<>("Failures");
         failureCountCol.setCellValueFactory(data -> 
             new javafx.beans.property.SimpleStringProperty(String.valueOf(data.getValue().failureCount)));
-        failureCountCol.setPrefWidth(80);
+        failureCountCol.setPrefWidth(100);
 
         TableColumn<ComponentFailureData, String> percentCol = new TableColumn<>("% of Total");
         percentCol.setCellValueFactory(data -> 
             new javafx.beans.property.SimpleStringProperty(
                 String.format("%.1f%%", data.getValue().percentOfTotal)));
-        percentCol.setPrefWidth(100);
+        percentCol.setPrefWidth(120);
 
         componentTable.getColumns().addAll(rankCol, componentCol, failureCountCol, percentCol);
 
-        // Most problematic units
         Label unitsTitle = new Label("Units with Most Incidents");
         unitsTitle.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
 
         TableView<UnitIncidentData> unitsTable = new TableView<>();
         unitsTable.setPrefHeight(250);
+        unitsTable.setMaxWidth(Double.MAX_VALUE);
 
         TableColumn<UnitIncidentData, String> unitRankCol = new TableColumn<>("#");
         unitRankCol.setCellValueFactory(data -> 
             new javafx.beans.property.SimpleStringProperty(String.valueOf(data.getValue().rank)));
-        unitRankCol.setPrefWidth(40);
+        unitRankCol.setPrefWidth(60);
 
         TableColumn<UnitIncidentData, String> unitNameCol = new TableColumn<>("Unit");
         unitNameCol.setCellValueFactory(data -> 
             new javafx.beans.property.SimpleStringProperty(data.getValue().unitName));
-        unitNameCol.setPrefWidth(200);
+        unitNameCol.setPrefWidth(300);
 
         TableColumn<UnitIncidentData, String> incidentCountCol = new TableColumn<>("Incidents");
         incidentCountCol.setCellValueFactory(data -> 
             new javafx.beans.property.SimpleStringProperty(String.valueOf(data.getValue().incidentCount)));
-        incidentCountCol.setPrefWidth(80);
+        incidentCountCol.setPrefWidth(100);
 
         TableColumn<UnitIncidentData, String> highCountCol = new TableColumn<>("HIGH");
         highCountCol.setCellValueFactory(data -> 
             new javafx.beans.property.SimpleStringProperty(String.valueOf(data.getValue().highCount)));
-        highCountCol.setPrefWidth(60);
+        highCountCol.setPrefWidth(80);
 
         unitsTable.getColumns().addAll(unitRankCol, unitNameCol, incidentCountCol, highCountCol);
 
-        // Component co-occurrence (which components fail together)
-        Label coOccurrenceTitle = new Label("Components That Fail Together");
-        coOccurrenceTitle.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
-
-        TextArea coOccurrenceText = new TextArea();
-        coOccurrenceText.setEditable(false);
-        coOccurrenceText.setPrefHeight(150);
-        coOccurrenceText.setWrapText(true);
-
-        // Insights section
+        // Three text sections side-by-side
         Label insightsTitle = new Label("Key Insights");
         insightsTitle.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
-
         TextArea insightsText = new TextArea();
         insightsText.setEditable(false);
-        insightsText.setPrefHeight(250);  // Increased height for better readability
+        insightsText.setPrefHeight(300);
         insightsText.setWrapText(true);
+        VBox insightsBox = new VBox(5, insightsTitle, insightsText);
+        HBox.setHgrow(insightsBox, Priority.ALWAYS);
 
-        // Load data function
+        Label coOccurrenceTitle = new Label("Components That Fail Together");
+        coOccurrenceTitle.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
+        TextArea coOccurrenceText = new TextArea();
+        coOccurrenceText.setEditable(false);
+        coOccurrenceText.setPrefHeight(300);
+        coOccurrenceText.setWrapText(true);
+        VBox coOccurrenceBox = new VBox(5, coOccurrenceTitle, coOccurrenceText);
+        HBox.setHgrow(coOccurrenceBox, Priority.ALWAYS);
+
+        Label unitsTextTitle = new Label("Top 10 Problematic Units");
+        unitsTextTitle.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
+        TextArea unitsTextArea = new TextArea();
+        unitsTextArea.setEditable(false);
+        unitsTextArea.setPrefHeight(300);
+        unitsTextArea.setWrapText(true);
+        VBox unitsTextBox = new VBox(5, unitsTextTitle, unitsTextArea);
+        HBox.setHgrow(unitsTextBox, Priority.ALWAYS);
+
+        HBox textSectionsRow = new HBox(15, insightsBox, coOccurrenceBox, unitsTextBox);
+
         Runnable loadAnalytics = () -> {
             try {
                 LocalDate start = startDate.getValue();
                 LocalDate end = endDate.getValue();
 
-                // Collect all incidents in date range
                 List<Incident> allIncidents = new ArrayList<>();
                 List<Unit> allUnits = UnitRepository.getAll();
                 Map<String, String> unitMap = new HashMap<>();
@@ -195,7 +211,6 @@ public class AnalyticsPage extends VBox {
                     }
                 }
 
-                // Calculate summary stats
                 int total = allIncidents.size();
                 long high = allIncidents.stream().filter(i -> "HIGH".equals(i.severity)).count();
                 long medium = allIncidents.stream().filter(i -> "MEDIUM".equals(i.severity)).count();
@@ -206,7 +221,6 @@ public class AnalyticsPage extends VBox {
                 mediumSeverityLabel.setText("MEDIUM Severity: " + medium);
                 lowSeverityLabel.setText("LOW Severity: " + low);
 
-                // Component failure frequency
                 Map<String, Integer> componentFailures = new HashMap<>();
                 Map<String, String> componentIdToName = new HashMap<>();
 
@@ -224,7 +238,6 @@ public class AnalyticsPage extends VBox {
                     }
                 }
 
-                // Sort and rank components
                 List<ComponentFailureData> componentData = new ArrayList<>();
                 int rank = 1;
                 for (Map.Entry<String, Integer> entry : componentFailures.entrySet()
@@ -242,7 +255,6 @@ public class AnalyticsPage extends VBox {
 
                 componentTable.getItems().setAll(componentData);
 
-                // Unit incident ranking
                 Map<String, Integer> unitIncidentCount = new HashMap<>();
                 Map<String, Integer> unitHighCount = new HashMap<>();
 
@@ -274,7 +286,17 @@ public class AnalyticsPage extends VBox {
 
                 unitsTable.getItems().setAll(unitData);
 
-                // Component co-occurrence analysis
+                // Fill units text area
+                StringBuilder unitsText = new StringBuilder();
+                for (UnitIncidentData data : unitData) {
+                    unitsText.append(String.format("#%d - %s\n   %d incidents (%d HIGH)\n\n",
+                        data.rank, data.unitName, data.incidentCount, data.highCount));
+                }
+                if (unitsText.length() == 0) {
+                    unitsText.append("No units found in the selected date range.");
+                }
+                unitsTextArea.setText(unitsText.toString());
+
                 Map<String, Integer> pairCounts = new HashMap<>();
                 for (Incident incident : allIncidents) {
                     List<String> componentIds = IncidentComponentRepository
@@ -309,7 +331,6 @@ public class AnalyticsPage extends VBox {
 
                 coOccurrenceText.setText(coOccurrence.toString());
 
-                // Generate insights
                 StringBuilder insights = new StringBuilder();
                 
                 if (!componentData.isEmpty()) {
@@ -353,20 +374,15 @@ public class AnalyticsPage extends VBox {
         };
 
         refresh.setOnAction(e -> loadAnalytics.run());
-
-        // Initial load
         loadAnalytics.run();
 
-        // Export PDF button
         Button exportPdf = new Button("Export PDF Report");
         exportPdf.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;");
         exportPdf.setOnAction(e -> {
             try {
-                // Get current analytics data
                 LocalDate start = startDate.getValue();
                 LocalDate end = endDate.getValue();
                 
-                // Generate PDF
                 String filename = "Analytics_Report_" + start + "_to_" + end + ".pdf";
                 String filepath = System.getProperty("user.home") + "/Desktop/" + filename;
                 
@@ -413,16 +429,11 @@ public class AnalyticsPage extends VBox {
                 unitsTitle,
                 unitsTable,
                 new Separator(),
-                coOccurrenceTitle,
-                coOccurrenceText,
-                new Separator(),
-                insightsTitle,
-                insightsText,
+                textSectionsRow,
                 new Separator(),
                 buttonRow
         );
 
-        // Wrap content in ScrollPane
         ScrollPane scrollPane = new ScrollPane(content);
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
@@ -430,22 +441,6 @@ public class AnalyticsPage extends VBox {
         getChildren().add(scrollPane);
     }
 
-    /**
-     * Generates a professional PDF report of the analytics data.
-     *
-     * @param filepath Path where the PDF will be saved
-     * @param startDate Start date of the report period
-     * @param endDate End date of the report period
-     * @param componentData Component failure data table
-     * @param unitData Unit incident data table
-     * @param coOccurrenceText Component co-occurrence text
-     * @param insightsText Key insights text
-     * @param totalLabel Total incidents label text
-     * @param highLabel HIGH severity label text
-     * @param mediumLabel MEDIUM severity label text
-     * @param lowLabel LOW severity label text
-     * @throws Exception If PDF generation fails
-     */
     private void generatePdfReport(String filepath, LocalDate startDate, LocalDate endDate,
                                    ObservableList<ComponentFailureData> componentData,
                                    ObservableList<UnitIncidentData> unitData,
@@ -453,22 +448,18 @@ public class AnalyticsPage extends VBox {
                                    String totalLabel, String highLabel, 
                                    String mediumLabel, String lowLabel) throws Exception {
         
-        // Initialize PDF writer and document
         PdfWriter writer = new PdfWriter(new FileOutputStream(filepath));
         PdfDocument pdf = new PdfDocument(writer);
         Document document = new Document(pdf);
         
-        // Set up fonts for headings and body text
         PdfFont boldFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD);
         PdfFont normalFont = PdfFontFactory.createFont(StandardFonts.HELVETICA);
         
-        // Add report title
         Paragraph title = new Paragraph("SDS Weather Analytics Report")
             .setFont(boldFont)
             .setFontSize(20);
         document.add(title);
         
-        // Add date range subtitle
         Paragraph dateRange = new Paragraph("Report Period: " + startDate + " to " + endDate)
             .setFont(normalFont)
             .setFontSize(12);
@@ -476,7 +467,6 @@ public class AnalyticsPage extends VBox {
         
         document.add(new Paragraph("\n"));
         
-        // Summary Statistics section
         Paragraph summaryTitle = new Paragraph("Summary Statistics")
             .setFont(boldFont)
             .setFontSize(16);
@@ -489,23 +479,19 @@ public class AnalyticsPage extends VBox {
         
         document.add(new Paragraph("\n"));
         
-        // Component Failure Frequency section
         Paragraph componentTitle = new Paragraph("Component Failure Frequency")
             .setFont(boldFont)
             .setFontSize(16);
         document.add(componentTitle);
         
-        // Create table with 4 columns: rank, component name, failures, percentage
         Table componentTable = new Table(new float[]{1, 5, 2, 2});
         componentTable.setWidth(500);
         
-        // Add table header row
         componentTable.addCell(new Cell().add(new Paragraph("#").setFont(boldFont)));
         componentTable.addCell(new Cell().add(new Paragraph("Component").setFont(boldFont)));
         componentTable.addCell(new Cell().add(new Paragraph("Failures").setFont(boldFont)));
         componentTable.addCell(new Cell().add(new Paragraph("% of Total").setFont(boldFont)));
         
-        // Add data rows from component failure table
         for (ComponentFailureData data : componentData) {
             componentTable.addCell(new Cell().add(new Paragraph(String.valueOf(data.rank)).setFont(normalFont)));
             componentTable.addCell(new Cell().add(new Paragraph(data.componentName).setFont(normalFont)));
@@ -516,23 +502,19 @@ public class AnalyticsPage extends VBox {
         document.add(componentTable);
         document.add(new Paragraph("\n"));
         
-        // Most Problematic Units section
         Paragraph unitsTitle = new Paragraph("Units with Most Incidents")
             .setFont(boldFont)
             .setFontSize(16);
         document.add(unitsTitle);
         
-        // Create table with 4 columns: rank, unit name, incidents, high severity count
         Table unitsTable = new Table(new float[]{1, 5, 2, 2});
         unitsTable.setWidth(500);
         
-        // Add table header row
         unitsTable.addCell(new Cell().add(new Paragraph("#").setFont(boldFont)));
         unitsTable.addCell(new Cell().add(new Paragraph("Unit").setFont(boldFont)));
         unitsTable.addCell(new Cell().add(new Paragraph("Incidents").setFont(boldFont)));
         unitsTable.addCell(new Cell().add(new Paragraph("HIGH").setFont(boldFont)));
         
-        // Add data rows from units table
         for (UnitIncidentData data : unitData) {
             unitsTable.addCell(new Cell().add(new Paragraph(String.valueOf(data.rank)).setFont(normalFont)));
             unitsTable.addCell(new Cell().add(new Paragraph(data.unitName).setFont(normalFont)));
@@ -543,7 +525,6 @@ public class AnalyticsPage extends VBox {
         document.add(unitsTable);
         document.add(new Paragraph("\n"));
         
-        // Component Co-occurrence section
         Paragraph coOccurrenceTitle = new Paragraph("Components That Fail Together")
             .setFont(boldFont)
             .setFontSize(16);
@@ -556,7 +537,6 @@ public class AnalyticsPage extends VBox {
         
         document.add(new Paragraph("\n"));
         
-        // Key Insights section
         Paragraph insightsTitle = new Paragraph("Key Insights")
             .setFont(boldFont)
             .setFontSize(16);
@@ -567,12 +547,9 @@ public class AnalyticsPage extends VBox {
             .setFontSize(10);
         document.add(insights);
         
-        // Close and save the PDF document
         document.close();
     }
 
-    // Helper classes for table data
-    /** Data transfer object for component failure frequency table rows. */
     public static class ComponentFailureData {
         int rank;
         String componentName;
