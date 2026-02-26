@@ -35,11 +35,6 @@ public class UpdateDialog extends Dialog<ButtonType> {
         .followRedirects(HttpClient.Redirect.ALWAYS)
         .build();
 
-    /**
-     * Shows the update dialog with current skip count enforcement.
-     * 
-     * @param updateInfo Information about the available update
-     */
     public UpdateDialog(UpdateChecker.UpdateInfo updateInfo) {
 
         setTitle("Update Available");
@@ -90,12 +85,6 @@ public class UpdateDialog extends Dialog<ButtonType> {
         });
     }
 
-    /**
-     * Gets the number of times the user has skipped this specific version.
-     * 
-     * @param version The version to check skip count for
-     * @return Number of skips (0-3+)
-     */
     private int getSkipCount(String version) {
         try {
             File skipFile = new File(SKIP_COUNT_FILE);
@@ -117,11 +106,6 @@ public class UpdateDialog extends Dialog<ButtonType> {
         }
     }
 
-    /**
-     * Increments the skip count for a specific version.
-     * 
-     * @param version The version that was skipped
-     */
     private void incrementSkipCount(String version) {
         try {
             File skipFile = new File(SKIP_COUNT_FILE);
@@ -145,29 +129,15 @@ public class UpdateDialog extends Dialog<ButtonType> {
         }
     }
 
-    /**
-     * Downloads and installs the update, then restarts the application.
-     * 
-     * @param downloadUrl GitHub download URL for the new JAR
-     */
     private void installUpdate(String downloadUrl) {
-        System.out.println("=== UPDATE STARTED ===");
-        System.out.println("Download URL: " + downloadUrl);
-        
-        // Show progress dialog
         Alert progress = new Alert(Alert.AlertType.INFORMATION);
         progress.setTitle("Installing Update");
         progress.setHeaderText("Downloading update...");
         progress.setContentText("Please wait, this may take a moment.");
         progress.show();
 
-        // Download and install on background thread
         new Thread(() -> {
-            System.out.println("=== DOWNLOAD THREAD STARTED ===");
             try {
-                System.out.println("About to create HTTP request...");
-                
-                // Download the new JAR
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(downloadUrl))
                         .GET()
@@ -175,16 +145,11 @@ public class UpdateDialog extends Dialog<ButtonType> {
 
                 HttpResponse<byte[]> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofByteArray());
 
-                System.out.println("Response status: " + response.statusCode());
-                System.out.println("Content-Type: " + response.headers().firstValue("Content-Type").orElse("unknown"));
-                System.out.println("Final URI: " + response.uri());
-
                 if (response.statusCode() != 200) {
                     showError("Download failed with status: " + response.statusCode());
                     return;
                 }
 
-                // Get the current JAR location
                 String jarPath = UpdateDialog.class.getProtectionDomain()
                         .getCodeSource()
                         .getLocation()
@@ -195,18 +160,14 @@ public class UpdateDialog extends Dialog<ButtonType> {
                 File newJar = new File(currentJar.getParent(), "incident-tracker-new.jar");
                 File backupJar = new File(currentJar.getParent(), "incident-tracker-backup.jar");
 
-                // Save the downloaded JAR
                 Files.write(newJar.toPath(), response.body());
 
-                // Backup the current JAR
                 if (currentJar.exists()) {
                     Files.copy(currentJar.toPath(), backupJar.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 }
 
-                // Replace current JAR with new JAR
                 Files.move(newJar.toPath(), currentJar.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-                // Clear skip count for this version
                 File skipFile = new File(SKIP_COUNT_FILE);
                 if (skipFile.exists()) {
                     skipFile.delete();
@@ -221,7 +182,6 @@ public class UpdateDialog extends Dialog<ButtonType> {
                     success.setContentText("The application will now restart.");
                     success.showAndWait();
 
-                    // Restart the application
                     restartApplication(currentJar);
                 });
 
@@ -235,12 +195,6 @@ public class UpdateDialog extends Dialog<ButtonType> {
         }).start();
     }
 
-    /**
-     * Restarts the application by launching a new instance and exiting the current one.
-     * Handles macOS .app bundles, Windows .exe installers, and standalone JAR files.
-     * 
-     * @param jarFile The JAR file to execute
-     */
     private void restartApplication(File jarFile) {
         try {
             String jarPath = jarFile.getAbsolutePath();
@@ -249,20 +203,18 @@ public class UpdateDialog extends Dialog<ButtonType> {
             ProcessBuilder builder;
             
             if (os.contains("mac") && jarPath.contains(".app/Contents/")) {
-                // Running from macOS .app bundle - use 'open' command to restart the app
                 String appPath = jarPath.substring(0, jarPath.indexOf(".app/") + 4);
-                builder = new ProcessBuilder("open", appPath);
+                builder = new ProcessBuilder("open", "-n", appPath);
             } else if (os.contains("win") && jarPath.contains("\\app\\")) {
-                // Running from Windows jpackage .exe - find and restart the .exe
                 String exePath = jarPath.substring(0, jarPath.indexOf("\\app\\")) + ".exe";
                 builder = new ProcessBuilder(exePath);
             } else {
-                // Running from standalone JAR - use java -jar
                 String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
                 builder = new ProcessBuilder(javaBin, "-jar", jarFile.getAbsolutePath());
             }
             
             builder.start();
+            Thread.sleep(500);
             System.exit(0);
 
         } catch (Exception e) {
@@ -271,11 +223,6 @@ public class UpdateDialog extends Dialog<ButtonType> {
         }
     }
 
-    /**
-     * Displays an error alert to the user.
-     * 
-     * @param message Error message to display
-     */
     private void showError(String message) {
         Platform.runLater(() -> {
             Alert error = new Alert(Alert.AlertType.ERROR);
