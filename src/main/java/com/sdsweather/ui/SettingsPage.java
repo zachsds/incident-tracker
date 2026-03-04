@@ -510,6 +510,14 @@ public class SettingsPage extends VBox {
                 selectedComponentsList.remove(selected);
             });
 
+            // Button to clear all selected components at once
+            Button clearAllTemplateComponents = new Button("Clear All");
+            clearAllTemplateComponents.setOnAction(e -> {
+                // Clear both the map and display list
+                selectedComponentMap.clear();
+                selectedComponentsList.clear();
+            });
+
             // Handle template creation
             Button addTemplate = new Button("Create Template");
             addTemplate.setOnAction(e -> {
@@ -606,7 +614,8 @@ public class SettingsPage extends VBox {
             selectedColumn.getChildren().addAll(
                 new Label("Selected Components:"),
                 selectedComponentsView,
-                removeComponentFromTemplate
+                removeComponentFromTemplate,
+                clearAllTemplateComponents
             );
             
             HBox componentSelectionRow = new HBox(10, availableColumn, selectedColumn);

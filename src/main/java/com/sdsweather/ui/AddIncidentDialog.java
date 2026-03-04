@@ -145,6 +145,14 @@ public class AddIncidentDialog extends Dialog<Void> {
             selectedComponentsList.remove(selected);
         });
 
+        // Button to clear all selected components at once
+        Button clearAllComponents = new Button("Clear All");
+        clearAllComponents.setOnAction(e -> {
+            // Clear both the map and display list
+            selectedComponentMap.clear();
+            selectedComponentsList.clear();
+        });
+
         // Template selection handler - pre-fills fields when template is chosen
         templateBox.setOnAction(e -> {
             String selected = templateBox.getValue();
@@ -205,7 +213,8 @@ public class AddIncidentDialog extends Dialog<Void> {
         selectedColumn.getChildren().addAll(
             new Label("Selected Components:"),
             selectedComponentsView,
-            removeComponentFromIncident
+            removeComponentFromIncident,
+            clearAllComponents
         );
         
         HBox componentSelectionRow = new HBox(10, availableColumn, selectedColumn);
