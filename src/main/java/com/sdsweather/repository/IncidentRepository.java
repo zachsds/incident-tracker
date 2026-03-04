@@ -5,9 +5,11 @@ import com.sdsweather.security.SessionManager;
 import com.sdsweather.security.SSLConfig;
 
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,9 @@ import java.util.UUID;
  * createAndReturnId() method is used when component links also need
  * to be created immediately after the incident.
  *
+ * All API calls properly URL-encode parameters to handle special characters
+ * like spaces in unit IDs and titles.
+ *
  * API Base: https://192.168.0.237:3000/incidents
  *
  * @author Zachary Sneed
@@ -31,15 +36,35 @@ public class IncidentRepository {
     private static final String BASE = "https://192.168.0.237:3000";
     private static final HttpClient CLIENT = SSLConfig.createHttpClient();
 
+    /**
+     * Creates a new incident without returning the ID.
+     * 
+     * @param unitId The UUID of the unit this incident belongs to
+     * @param summary Brief description of the incident
+     * @param severity Severity level (LOW, MEDIUM, HIGH)
+     * @throws Exception If the API call fails
+     */
     public static void create(String unitId, String summary, String severity) throws Exception {
         createAndReturnId(unitId, summary, severity);
     }
 
+    /**
+     * Creates a new incident and returns its generated UUID.
+     * Used when component links need to be created immediately after.
+     * 
+     * @param unitId The UUID of the unit this incident belongs to
+     * @param summary Brief description of the incident
+     * @param severity Severity level (LOW, MEDIUM, HIGH)
+     * @return The generated incident UUID
+     * @throws Exception If the API call fails
+     */
     public static String createAndReturnId(String unitId, String summary, String severity) throws Exception {
 
+        // Generate new UUID for this incident
         String incidentId = UUID.randomUUID().toString();
         String reportedAt = Instant.now().toString();
 
+        // Build JSON request body
         String json = """
                 {
                   "incidentId": "%s",
@@ -50,6 +75,7 @@ public class IncidentRepository {
                 }
                 """.formatted(incidentId, unitId, summary, severity, reportedAt);
 
+        // Send POST request to create incident
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE + "/incidents"))
                 .header("Content-Type", "application/json")
@@ -67,10 +93,21 @@ public class IncidentRepository {
         return incidentId;
     }
 
+    /**
+     * Retrieves all incidents for a specific unit.
+     * URL-encodes the unitId to handle spaces and special characters.
+     * 
+     * @param unitId The UUID of the unit to get incidents for
+     * @return List of incidents for this unit
+     * @throws Exception If the API call fails
+     */
     public static List<Incident> getByUnit(String unitId) throws Exception {
 
+        // URL-encode the unitId to handle spaces and special characters
+        String encodedUnitId = URLEncoder.encode(unitId, StandardCharsets.UTF_8);
+
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE + "/incidents/" + unitId))
+                .uri(URI.create(BASE + "/incidents/" + encodedUnitId))
                 .header("Authorization", SessionManager.getAuthHeader())
                 .GET()
                 .build();
@@ -85,12 +122,15 @@ public class IncidentRepository {
         String body = response.body();
         List<Incident> list = new ArrayList<>();
 
+        // Return empty list if no incidents found
         if (body == null || body.isBlank() || body.equals("[]")) return list;
 
+        // Parse JSON array manually (simple approach for this use case)
         String[] rows = body.split("\\},\\{");
 
         for (String row : rows) {
 
+            // Clean up JSON delimiters
             row = row.replace("[", "")
                      .replace("]", "")
                      .replace("{", "")
@@ -98,6 +138,7 @@ public class IncidentRepository {
 
             Incident incident = new Incident();
 
+            // Parse each field in the JSON object
             for (String field : row.split(",")) {
 
                 String[] kv = field.split(":", 2);
@@ -106,6 +147,7 @@ public class IncidentRepository {
                 String key = kv[0].replace("\"", "").trim();
                 String val = kv[1].replace("\"", "").trim();
 
+                // Map JSON fields to Incident object properties
                 switch (key) {
                     case "id" -> incident.incidentId = val;
                     case "unitId" -> incident.unitId = val;
@@ -121,10 +163,20 @@ public class IncidentRepository {
         return list;
     }
 
+    /**
+     * Deletes an incident by its UUID.
+     * URL-encodes the incidentId to handle special characters.
+     * 
+     * @param incidentId The UUID of the incident to delete
+     * @throws Exception If the API call fails
+     */
     public static void delete(String incidentId) throws Exception {
 
+        // URL-encode the incidentId to handle special characters
+        String encodedIncidentId = URLEncoder.encode(incidentId, StandardCharsets.UTF_8);
+
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE + "/incidents/" + incidentId))
+                .uri(URI.create(BASE + "/incidents/" + encodedIncidentId))
                 .header("Authorization", SessionManager.getAuthHeader())
                 .DELETE()
                 .build();

@@ -43,7 +43,7 @@ public class UnitDetailPage extends VBox {
 
         // Create TableView with columns
         TableView<Incident> incidentTable = new TableView<>();
-        incidentTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        incidentTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
 
         // Date column
         TableColumn<Incident, String> dateCol = new TableColumn<>("Date");

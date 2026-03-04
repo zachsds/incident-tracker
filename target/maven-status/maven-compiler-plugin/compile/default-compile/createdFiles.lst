@@ -15,6 +15,7 @@ com/sdsweather/update/UpdateChecker.class
 com/sdsweather/ui/IncidentHistoryPage$1.class
 com/sdsweather/services/EmailService.class
 com/sdsweather/repository/IncidentRepository.class
+com/sdsweather/repository/IncidentTemplateRepository.class
 com/sdsweather/repository/AuthRepository.class
 com/sdsweather/ui/IncidentHistoryPage.class
 com/sdsweather/ui/LoginPage.class
@@ -22,6 +23,7 @@ com/sdsweather/ui/ViewUnitsPage$1.class
 com/sdsweather/repository/ComponentCategoryRepository.class
 com/sdsweather/security/PasswordHasher.class
 com/sdsweather/update/UpdateDialog.class
+com/sdsweather/repository/IncidentTemplateRepository$Template.class
 com/sdsweather/model/ComponentCategory.class
 com/sdsweather/repository/AuditLogRepository$AuditLog.class
 com/sdsweather/Launcher.class

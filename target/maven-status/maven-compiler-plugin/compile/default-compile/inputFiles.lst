@@ -11,6 +11,7 @@
 /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/repository/ComponentRepository.java
 /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/repository/IncidentComponentRepository.java
 /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/repository/IncidentRepository.java
+/Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/repository/IncidentTemplateRepository.java
 /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/repository/UnitRepository.java
 /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/repository/UserRepository.java
 /Users/sdsweather/Documents/design projects/incident-tracker/src/main/java/com/sdsweather/security/AuditLogger.java
