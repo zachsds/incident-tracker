@@ -15,7 +15,6 @@ import javafx.scene.layout.HBox;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
 
 /**
  * AddIncidentDialog - Modal dialog for recording a new incident on a unit.

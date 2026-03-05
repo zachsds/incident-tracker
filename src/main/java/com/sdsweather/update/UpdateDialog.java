@@ -31,7 +31,7 @@ import java.util.Properties;
  * 
  * Platform Support:
  *   - macOS: Uses 'open -n' to restart .app bundle
- *   - Windows: Creates batch script with delay to restart .exe
+ *   - Windows: Creates VBScript with delay to restart .exe
  *   - Standalone JAR: Launches new Java process
  * 
  * @author Zachary Sneed
@@ -257,7 +257,7 @@ public class UpdateDialog extends Dialog<ButtonType> {
      * Restarts the application using platform-specific logic.
      * 
      * macOS: Uses 'open -n' to launch a new instance of the .app bundle
-     * Windows: Creates batch script with 5-second delay before restarting .exe
+     * Windows: Creates VBScript with 6-second delay before restarting .exe
      * Other: Launches new Java process with same JAR
      * 
      * @param jarFile The JAR file location (used to determine platform and restart method)
@@ -280,25 +280,25 @@ public class UpdateDialog extends Dialog<ButtonType> {
                 System.exit(0);
                 
             } else if (os.contains("win") && jarPath.contains("\\app\\")) {
-                // Windows jpackage .exe - create batch script with delay
+                // Windows jpackage .exe - create VBScript with delay for better process handling
                 String appDir = jarPath.substring(0, jarPath.indexOf("\\app\\"));
                 String exePath = appDir + ".exe";
                 
-                // Create temporary batch file to restart after delay
-                File batchFile = new File(System.getProperty("java.io.tmpdir"), "restart_sds.bat");
-                try (FileWriter writer = new FileWriter(batchFile)) {
-                    writer.write("@echo off\n");
-                    writer.write("timeout /t 5 /nobreak > nul\n");  // Wait 5 seconds for app to exit
-                    writer.write("start \"\" \"" + exePath + "\"\n");  // Launch .exe
-                    writer.write("del \"%~f0\"\n");  // Delete batch file after execution
+                // Create temporary VBScript file to restart after delay
+                // VBScript handles process timing better than batch files on Windows
+                File vbsFile = new File(System.getProperty("java.io.tmpdir"), "restart_sds.vbs");
+                try (FileWriter writer = new FileWriter(vbsFile)) {
+                    writer.write("Set WshShell = CreateObject(\"WScript.Shell\")\n");
+                    writer.write("WScript.Sleep 6000\n");  // Wait 6 seconds for app to fully exit
+                    writer.write("WshShell.Run \"\"\"" + exePath + "\"\"\", 1, False\n");  // Launch .exe
                 }
                 
-                // Execute batch script
-                builder = new ProcessBuilder("cmd.exe", "/c", batchFile.getAbsolutePath());
+                // Execute VBScript
+                builder = new ProcessBuilder("wscript.exe", vbsFile.getAbsolutePath());
                 builder.start();
                 
-                // Wait briefly then exit to allow batch script to take over
-                Thread.sleep(2000);
+                // Wait briefly then exit to allow VBScript to take over
+                Thread.sleep(500);
                 System.exit(0);
                 
             } else {
