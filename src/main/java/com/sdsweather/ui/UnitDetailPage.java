@@ -258,6 +258,13 @@ public class UnitDetailPage extends VBox {
         // Action buttons row
         HBox actions = new HBox(10, addIncident, editIncident, deleteIncident);
 
+        // Component History button - view component replacement history
+        Button componentHistory = new Button("Component History");
+        componentHistory.setOnAction(e -> Navigator.show(new ComponentHistoryPage(unit)));
+
+        // Navigation buttons row
+        HBox navigation = new HBox(10, componentHistory);
+
         // Back button - return to units list page
         Button back = new Button("Back");
         back.setOnAction(e -> Navigator.show(new ViewUnitsPage()));
@@ -269,6 +276,7 @@ public class UnitDetailPage extends VBox {
                 filterBox,
                 incidentTable,
                 actions,
+                navigation,
                 back
         );
     }

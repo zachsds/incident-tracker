@@ -207,6 +207,72 @@ public class IncidentRepository {
     }
 
     /**
+     * Retrieves all incidents across all units.
+     * Used for global analytics and reporting.
+     * 
+     * @return List of all incidents in the system
+     * @throws Exception If the API call fails
+     */
+    public static List<Incident> getAll() throws Exception {
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE + "/incidents"))
+                .header("Authorization", SessionManager.getAuthHeader())
+                .GET()
+                .build();
+
+        HttpResponse<String> response =
+                CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() != 200) {
+            throw new RuntimeException("Get all incidents failed: " + response.body());
+        }
+
+        String body = response.body();
+        List<Incident> list = new ArrayList<>();
+
+        // Return empty list if no incidents found
+        if (body == null || body.isBlank() || body.equals("[]")) return list;
+
+        // Parse JSON array manually
+        String[] rows = body.split("\\},\\{");
+
+        for (String row : rows) {
+
+            // Clean up JSON delimiters
+            row = row.replace("[", "")
+                     .replace("]", "")
+                     .replace("{", "")
+                     .replace("}", "");
+
+            Incident incident = new Incident();
+
+            // Parse each field in the JSON object
+            for (String field : row.split(",")) {
+
+                String[] kv = field.split(":", 2);
+                if (kv.length != 2) continue;
+
+                String key = kv[0].replace("\"", "").trim();
+                String val = kv[1].replace("\"", "").trim();
+
+                // Map JSON fields to Incident object properties
+                switch (key) {
+                    case "id" -> incident.incidentId = val;
+                    case "unitId" -> incident.unitId = val;
+                    case "summary" -> incident.summary = val;
+                    case "severity" -> incident.severity = val;
+                    case "reportedAt" -> incident.reportedAt = val;
+                }
+            }
+
+            list.add(incident);
+        }
+
+        return list;
+    }
+
+    /**
      * Deletes an incident by its UUID.
      * URL-encodes the incidentId to handle special characters.
      * 

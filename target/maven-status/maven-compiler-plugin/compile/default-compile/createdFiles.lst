@@ -3,6 +3,7 @@ com/sdsweather/repository/IncidentComponentRepository.class
 com/sdsweather/update/UpdateChecker$UpdateInfo.class
 com/sdsweather/ui/AuditLogPage$1.class
 com/sdsweather/ui/UnitDetailPage$1.class
+com/sdsweather/ui/AnalyticsPage$ComponentReplacementData.class
 com/sdsweather/repository/AuditLogRepository.class
 com/sdsweather/ui/AuditLogPage.class
 com/sdsweather/security/SSLConfig.class
@@ -11,7 +12,9 @@ com/sdsweather/ui/UnitDetailPage.class
 com/sdsweather/repository/UserRepository.class
 com/sdsweather/ui/AnalyticsPage$ComponentFailureData.class
 com/sdsweather/ui/ForgotPasswordDialog.class
+com/sdsweather/ui/MarkAsReplacedDialog.class
 com/sdsweather/update/UpdateChecker.class
+com/sdsweather/ui/ComponentHistoryPage$TimelineEntry.class
 com/sdsweather/ui/IncidentHistoryPage$1.class
 com/sdsweather/services/EmailService.class
 com/sdsweather/repository/IncidentRepository.class
@@ -27,6 +30,9 @@ com/sdsweather/update/UpdateDialog.class
 com/sdsweather/repository/IncidentTemplateRepository$Template.class
 com/sdsweather/model/ComponentCategory.class
 com/sdsweather/repository/AuditLogRepository$AuditLog.class
+com/sdsweather/ui/AddReplacementDialog.class
+com/sdsweather/repository/ComponentReplacementRepository.class
+com/sdsweather/repository/ComponentReplacementRepository$ComponentReplacement.class
 com/sdsweather/Launcher.class
 com/sdsweather/App.class
 com/sdsweather/ui/AnalysisPage.class
@@ -34,9 +40,11 @@ com/sdsweather/ui/AddUnitPage.class
 com/sdsweather/security/SessionManager.class
 com/sdsweather/ui/LandingPage.class
 com/sdsweather/ui/AnalyticsPage$UnitIncidentData.class
+com/sdsweather/ui/ComponentHistoryPage$1.class
 com/sdsweather/ui/AddIncidentDialog.class
 com/sdsweather/security/AuditLogger.class
 com/sdsweather/services/EmailService$1.class
+com/sdsweather/ui/ComponentHistoryPage.class
 com/sdsweather/model/Incident.class
 com/sdsweather/ui/AppStyles.class
 com/sdsweather/navigation/Navigator.class
@@ -47,3 +55,4 @@ com/sdsweather/ui/IncidentHistoryPage$2.class
 com/sdsweather/repository/ComponentRepository.class
 com/sdsweather/ui/ViewUnitsPage.class
 com/sdsweather/model/Component.class
+com/sdsweather/ui/EditReplacementDialog.class

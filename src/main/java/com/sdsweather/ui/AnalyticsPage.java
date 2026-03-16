@@ -6,6 +6,7 @@ import com.sdsweather.navigation.Navigator;
 import com.sdsweather.repository.IncidentRepository;
 import com.sdsweather.repository.IncidentComponentRepository;
 import com.sdsweather.repository.ComponentRepository;
+import com.sdsweather.repository.ComponentReplacementRepository;
 import com.sdsweather.repository.UnitRepository;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
@@ -36,29 +37,26 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * AnalyticsPage - Comprehensive analytics dashboard for incident trends and patterns.
+ * AnalyticsPage - Comprehensive analytics dashboard for incidents, replacements, and trends.
  *
- * Provides visual analysis of component failures, unit performance, and incident
- * patterns over a configurable date range. Helps identify problematic components
- * and units requiring preventive maintenance.
+ * Provides visual analysis of component failures, unit performance, replacement costs,
+ * and incident patterns over a configurable date range. Helps identify problematic 
+ * components and units requiring preventive maintenance.
  *
  * Features:
  *   - Date range filtering (default: last 3 months)
- *   - Summary statistics (total, HIGH, MEDIUM, LOW counts)
- *   - Component failure frequency ranking table with corrected percentages
+ *   - Summary statistics (incidents + replacements + costs)
+ *   - Component failure frequency ranking table
+ *   - Component replacement frequency ranking table with cost analysis
  *   - Most problematic units table (top 10)
  *   - Component co-occurrence analysis (which parts fail together)
+ *   - Incident-to-replacement resolution rate tracking
  *   - Auto-generated key insights
- *   - PDF report export with file chooser dialog
- *
- * Percentage Calculation:
- *   Component failure percentages are calculated as:
- *   (individual component failures / total component failures across all incidents) * 100
- *   This ensures percentages sum to 100% across all components.
+ *   - PDF report export with all analytics sections
  *
  * @author Zachary Sneed
  * @version 1.0
- * @since 2026-02-16
+ * @since 2026-03-16
  */
 public class AnalyticsPage extends VBox {
 
@@ -90,7 +88,7 @@ public class AnalyticsPage extends VBox {
                 refresh
         );
 
-        // Summary statistics labels
+        // Summary statistics labels - Row 1: Incidents
         Label totalIncidentsLabel = new Label("Total Incidents: -");
         Label highSeverityLabel = new Label("HIGH Severity: -");
         highSeverityLabel.setTextFill(Color.RED);
@@ -98,7 +96,14 @@ public class AnalyticsPage extends VBox {
         mediumSeverityLabel.setTextFill(Color.ORANGE);
         Label lowSeverityLabel = new Label("LOW Severity: -");
 
-        // Grid layout for summary stats
+        // Summary statistics labels - Row 2: Replacements
+        Label totalReplacementsLabel = new Label("Total Replacements: -");
+        Label totalReplacementCostLabel = new Label("Total Cost: -");
+        totalReplacementCostLabel.setTextFill(Color.web("#27ae60"));
+        Label avgReplacementCostLabel = new Label("Average Cost: -");
+        Label resolutionRateLabel = new Label("Incident Resolution Rate: -");
+
+        // Grid layout for summary stats (2 rows)
         GridPane statsGrid = new GridPane();
         statsGrid.setHgap(20);
         statsGrid.setVgap(10);
@@ -106,12 +111,16 @@ public class AnalyticsPage extends VBox {
         statsGrid.add(highSeverityLabel, 1, 0);
         statsGrid.add(mediumSeverityLabel, 2, 0);
         statsGrid.add(lowSeverityLabel, 3, 0);
+        statsGrid.add(totalReplacementsLabel, 0, 1);
+        statsGrid.add(totalReplacementCostLabel, 1, 1);
+        statsGrid.add(avgReplacementCostLabel, 2, 1);
+        statsGrid.add(resolutionRateLabel, 3, 1);
 
-        // Component ranking table section title
+        // Component failure ranking table section title
         Label componentRankingTitle = new Label("Component Failure Frequency");
         componentRankingTitle.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
 
-        // Component ranking table setup
+        // Component failure ranking table setup
         TableView<ComponentFailureData> componentTable = new TableView<>();
         componentTable.setPrefHeight(300);
         componentTable.setMaxWidth(Double.MAX_VALUE);
@@ -134,7 +143,7 @@ public class AnalyticsPage extends VBox {
             new javafx.beans.property.SimpleStringProperty(String.valueOf(data.getValue().failureCount)));
         failureCountCol.setPrefWidth(100);
 
-        // Percentage column - now correctly calculated
+        // Percentage column
         TableColumn<ComponentFailureData, String> percentCol = new TableColumn<>("% of Total");
         percentCol.setCellValueFactory(data -> 
             new javafx.beans.property.SimpleStringProperty(
@@ -142,6 +151,39 @@ public class AnalyticsPage extends VBox {
         percentCol.setPrefWidth(120);
 
         componentTable.getColumns().addAll(rankCol, componentCol, failureCountCol, percentCol);
+
+        // Replacement frequency table section title
+        Label replacementRankingTitle = new Label("Component Replacement Frequency");
+        replacementRankingTitle.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
+
+        // Replacement ranking table setup
+        TableView<ComponentReplacementData> replacementTable = new TableView<>();
+        replacementTable.setPrefHeight(300);
+        replacementTable.setMaxWidth(Double.MAX_VALUE);
+
+        TableColumn<ComponentReplacementData, String> replComponentCol = new TableColumn<>("Component");
+        replComponentCol.setCellValueFactory(data -> 
+            new javafx.beans.property.SimpleStringProperty(data.getValue().componentName));
+        replComponentCol.setPrefWidth(400);
+
+        TableColumn<ComponentReplacementData, String> replCountCol = new TableColumn<>("Replacements");
+        replCountCol.setCellValueFactory(data -> 
+            new javafx.beans.property.SimpleStringProperty(String.valueOf(data.getValue().replacementCount)));
+        replCountCol.setPrefWidth(120);
+
+        TableColumn<ComponentReplacementData, String> replPercentCol = new TableColumn<>("% of Total");
+        replPercentCol.setCellValueFactory(data -> 
+            new javafx.beans.property.SimpleStringProperty(
+                String.format("%.1f%%", data.getValue().percentOfTotal)));
+        replPercentCol.setPrefWidth(120);
+
+        TableColumn<ComponentReplacementData, String> replCostCol = new TableColumn<>("Avg Cost");
+        replCostCol.setCellValueFactory(data -> 
+            new javafx.beans.property.SimpleStringProperty(
+                data.getValue().averageCost > 0 ? String.format("$%.2f", data.getValue().averageCost) : "-"));
+        replCostCol.setPrefWidth(100);
+
+        replacementTable.getColumns().addAll(replComponentCol, replCountCol, replPercentCol, replCostCol);
 
         // Units ranking table section title
         Label unitsTitle = new Label("Units with Most Incidents");
@@ -242,17 +284,52 @@ public class AnalyticsPage extends VBox {
                     }
                 }
 
-                // Calculate summary statistics
+                // Load all replacement records
+                List<ComponentReplacementRepository.ComponentReplacement> allReplacements = 
+                    ComponentReplacementRepository.getAll();
+                
+                // Filter replacements by date range
+                List<ComponentReplacementRepository.ComponentReplacement> filteredReplacements = new ArrayList<>();
+                for (ComponentReplacementRepository.ComponentReplacement repl : allReplacements) {
+                    LocalDate replDate = LocalDate.parse(repl.replacedAt.substring(0, 10));
+                    if (!replDate.isBefore(start) && !replDate.isAfter(end)) {
+                        filteredReplacements.add(repl);
+                    }
+                }
+
+                // Calculate incident summary statistics
                 int total = allIncidents.size();
                 long high = allIncidents.stream().filter(i -> "HIGH".equals(i.severity)).count();
                 long medium = allIncidents.stream().filter(i -> "MEDIUM".equals(i.severity)).count();
                 long low = allIncidents.stream().filter(i -> "LOW".equals(i.severity)).count();
+
+                // Calculate replacement statistics
+                int totalReplacements = filteredReplacements.size();
+                double totalCost = filteredReplacements.stream()
+                    .filter(r -> r.cost != null)
+                    .mapToDouble(r -> r.cost)
+                    .sum();
+                long replacementsWithCost = filteredReplacements.stream()
+                    .filter(r -> r.cost != null)
+                    .count();
+                double avgCost = replacementsWithCost > 0 ? totalCost / replacementsWithCost : 0;
+
+                // Calculate incident-to-replacement ratio
+                long incidentsWithReplacements = allIncidents.stream()
+                    .filter(inc -> filteredReplacements.stream()
+                        .anyMatch(repl -> inc.incidentId.equals(repl.incidentId)))
+                    .count();
+                double resolutionRate = total > 0 ? (incidentsWithReplacements * 100.0 / total) : 0;
 
                 // Update summary labels
                 totalIncidentsLabel.setText("Total Incidents: " + total);
                 highSeverityLabel.setText("HIGH Severity: " + high);
                 mediumSeverityLabel.setText("MEDIUM Severity: " + medium);
                 lowSeverityLabel.setText("LOW Severity: " + low);
+                totalReplacementsLabel.setText("Total Replacements: " + totalReplacements);
+                totalReplacementCostLabel.setText(String.format("Total Cost: $%.2f", totalCost));
+                avgReplacementCostLabel.setText(String.format("Average Cost: $%.2f", avgCost));
+                resolutionRateLabel.setText(String.format("Incident Resolution Rate: %.1f%%", resolutionRate));
 
                 // Count component failures across all incidents
                 Map<String, Integer> componentFailures = new HashMap<>();
@@ -273,7 +350,7 @@ public class AnalyticsPage extends VBox {
                     }
                 }
 
-                // Build component ranking table data
+                // Build component failure ranking table data
                 List<ComponentFailureData> componentData = new ArrayList<>();
                 int rank = 1;
                 
@@ -290,13 +367,54 @@ public class AnalyticsPage extends VBox {
                     data.rank = rank++;
                     data.componentName = entry.getKey();
                     data.failureCount = entry.getValue();
-                    // Calculate percentage of total component failures (not total incidents)
+                    // Calculate percentage of total component failures
                     data.percentOfTotal = totalComponentFailures > 0 
                         ? (entry.getValue() * 100.0 / totalComponentFailures) : 0;
                     componentData.add(data);
                 }
 
                 componentTable.getItems().setAll(componentData);
+
+                // Count replacement frequency per component
+                Map<String, Integer> replacementCounts = new HashMap<>();
+                Map<String, List<Double>> replacementCosts = new HashMap<>();
+
+                for (ComponentReplacementRepository.ComponentReplacement repl : filteredReplacements) {
+                    String componentName = ComponentRepository.getNameById(repl.componentId);
+                    if (componentName != null) {
+                        replacementCounts.put(componentName, 
+                            replacementCounts.getOrDefault(componentName, 0) + 1);
+                        
+                        if (repl.cost != null) {
+                            replacementCosts.putIfAbsent(componentName, new ArrayList<>());
+                            replacementCosts.get(componentName).add(repl.cost);
+                        }
+                    }
+                }
+
+                // Build replacement ranking table
+                List<ComponentReplacementData> replacementData = new ArrayList<>();
+                for (Map.Entry<String, Integer> entry : replacementCounts.entrySet()
+                        .stream()
+                        .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                        .collect(Collectors.toList())) {
+                    
+                    ComponentReplacementData data = new ComponentReplacementData();
+                    data.componentName = entry.getKey();
+                    data.replacementCount = entry.getValue();
+                    data.percentOfTotal = totalReplacements > 0 
+                        ? (entry.getValue() * 100.0 / totalReplacements) : 0;
+                    
+                    // Calculate average cost for this component
+                    if (replacementCosts.containsKey(entry.getKey())) {
+                        List<Double> costs = replacementCosts.get(entry.getKey());
+                        data.averageCost = costs.stream().mapToDouble(Double::doubleValue).average().orElse(0);
+                    }
+                    
+                    replacementData.add(data);
+                }
+
+                replacementTable.getItems().setAll(replacementData);
 
                 // Count incidents per unit
                 Map<String, Integer> unitIncidentCount = new HashMap<>();
@@ -413,6 +531,25 @@ public class AnalyticsPage extends VBox {
                         topUnit.unitName, topUnit.incidentCount, topUnit.highCount));
                 }
 
+                // Insight about replacement rate
+                if (totalReplacements > 0) {
+                    insights.append(String.format("• %d component replacements recorded (%.1f%% of incidents resulted in replacements)\n\n",
+                        totalReplacements, resolutionRate));
+                }
+
+                // Insight about most replaced component
+                if (!replacementData.isEmpty()) {
+                    ComponentReplacementData topReplacement = replacementData.get(0);
+                    insights.append(String.format("• %s is replaced most often (%d times, avg cost: $%.2f)\n\n",
+                        topReplacement.componentName, topReplacement.replacementCount, topReplacement.averageCost));
+                }
+
+                // Insight about total replacement costs
+                if (totalCost > 0) {
+                    insights.append(String.format("• Total replacement costs: $%.2f (average $%.2f per replacement)\n\n",
+                        totalCost, avgCost));
+                }
+
                 if (insights.length() == 0) {
                     insights.append("No significant patterns found in the selected date range.");
                 }
@@ -462,12 +599,17 @@ public class AnalyticsPage extends VBox {
                 generatePdfReport(filepath, start, end, 
                     componentTable.getItems(), 
                     unitsTable.getItems(),
+                    replacementTable.getItems(),
                     coOccurrenceText.getText(),
                     insightsText.getText(),
                     totalIncidentsLabel.getText(),
                     highSeverityLabel.getText(),
                     mediumSeverityLabel.getText(),
-                    lowSeverityLabel.getText());
+                    lowSeverityLabel.getText(),
+                    totalReplacementsLabel.getText(),
+                    totalReplacementCostLabel.getText(),
+                    avgReplacementCostLabel.getText(),
+                    resolutionRateLabel.getText());
                 
                 // Show success message
                 Alert success = new Alert(Alert.AlertType.INFORMATION);
@@ -502,6 +644,9 @@ public class AnalyticsPage extends VBox {
                 componentRankingTitle,
                 componentTable,
                 new Separator(),
+                replacementRankingTitle,
+                replacementTable,
+                new Separator(),
                 unitsTitle,
                 unitsTable,
                 new Separator(),
@@ -519,7 +664,7 @@ public class AnalyticsPage extends VBox {
     }
 
     /**
-     * Generates a PDF report containing all analytics data.
+     * Generates a PDF report containing all analytics data including replacement history.
      * Creates a formatted PDF with tables, statistics, and insights.
      * 
      * @param filepath Path where PDF will be saved
@@ -527,20 +672,28 @@ public class AnalyticsPage extends VBox {
      * @param endDate Report end date
      * @param componentData Component failure ranking data
      * @param unitData Unit incident ranking data
+     * @param replacementData Component replacement ranking data
      * @param coOccurrenceText Component co-occurrence text
      * @param insightsText Key insights text
      * @param totalLabel Total incidents label text
      * @param highLabel HIGH severity label text
      * @param mediumLabel MEDIUM severity label text
      * @param lowLabel LOW severity label text
+     * @param totalReplLabel Total replacements label text
+     * @param totalCostLabel Total cost label text
+     * @param avgCostLabel Average cost label text
+     * @param resRateLabel Resolution rate label text
      * @throws Exception If PDF generation fails
      */
     private void generatePdfReport(String filepath, LocalDate startDate, LocalDate endDate,
                                    ObservableList<ComponentFailureData> componentData,
                                    ObservableList<UnitIncidentData> unitData,
+                                   ObservableList<ComponentReplacementData> replacementData,
                                    String coOccurrenceText, String insightsText,
                                    String totalLabel, String highLabel, 
-                                   String mediumLabel, String lowLabel) throws Exception {
+                                   String mediumLabel, String lowLabel,
+                                   String totalReplLabel, String totalCostLabel,
+                                   String avgCostLabel, String resRateLabel) throws Exception {
         
         PdfWriter writer = new PdfWriter(new FileOutputStream(filepath));
         PdfDocument pdf = new PdfDocument(writer);
@@ -563,8 +716,8 @@ public class AnalyticsPage extends VBox {
         
         document.add(new Paragraph("\n"));
         
-        // Summary statistics section
-        Paragraph summaryTitle = new Paragraph("Summary Statistics")
+        // Summary statistics section - Incidents
+        Paragraph summaryTitle = new Paragraph("Incident Summary Statistics")
             .setFont(boldFont)
             .setFontSize(16);
         document.add(summaryTitle);
@@ -573,6 +726,19 @@ public class AnalyticsPage extends VBox {
         document.add(new Paragraph(highLabel).setFont(normalFont).setFontSize(12));
         document.add(new Paragraph(mediumLabel).setFont(normalFont).setFontSize(12));
         document.add(new Paragraph(lowLabel).setFont(normalFont).setFontSize(12));
+        
+        document.add(new Paragraph("\n"));
+        
+        // Summary statistics section - Replacements
+        Paragraph replacementSummaryTitle = new Paragraph("Replacement Summary Statistics")
+            .setFont(boldFont)
+            .setFontSize(16);
+        document.add(replacementSummaryTitle);
+        
+        document.add(new Paragraph(totalReplLabel).setFont(normalFont).setFontSize(12));
+        document.add(new Paragraph(totalCostLabel).setFont(normalFont).setFontSize(12));
+        document.add(new Paragraph(avgCostLabel).setFont(normalFont).setFontSize(12));
+        document.add(new Paragraph(resRateLabel).setFont(normalFont).setFontSize(12));
         
         document.add(new Paragraph("\n"));
         
@@ -598,6 +764,31 @@ public class AnalyticsPage extends VBox {
         }
         
         document.add(componentTable);
+        document.add(new Paragraph("\n"));
+        
+        // Replacement history section
+        Paragraph replacementTitle = new Paragraph("Component Replacement History")
+            .setFont(boldFont)
+            .setFontSize(16);
+        document.add(replacementTitle);
+        
+        Table replacementTable = new Table(new float[]{5, 2, 2, 2});
+        replacementTable.setWidth(500);
+        
+        replacementTable.addCell(new Cell().add(new Paragraph("Component").setFont(boldFont)));
+        replacementTable.addCell(new Cell().add(new Paragraph("Replacements").setFont(boldFont)));
+        replacementTable.addCell(new Cell().add(new Paragraph("% of Total").setFont(boldFont)));
+        replacementTable.addCell(new Cell().add(new Paragraph("Avg Cost").setFont(boldFont)));
+        
+        for (ComponentReplacementData data : replacementData) {
+            replacementTable.addCell(new Cell().add(new Paragraph(data.componentName).setFont(normalFont)));
+            replacementTable.addCell(new Cell().add(new Paragraph(String.valueOf(data.replacementCount)).setFont(normalFont)));
+            replacementTable.addCell(new Cell().add(new Paragraph(String.format("%.1f%%", data.percentOfTotal)).setFont(normalFont)));
+            replacementTable.addCell(new Cell().add(new Paragraph(
+                data.averageCost > 0 ? String.format("$%.2f", data.averageCost) : "-").setFont(normalFont)));
+        }
+        
+        document.add(replacementTable);
         document.add(new Paragraph("\n"));
         
         // Units with most incidents table
@@ -671,5 +862,16 @@ public class AnalyticsPage extends VBox {
         String unitName;
         int incidentCount;
         int highCount;
+    }
+
+    /**
+     * Data class for component replacement statistics.
+     * Used in the replacement ranking table.
+     */
+    public static class ComponentReplacementData {
+        String componentName;
+        int replacementCount;
+        double percentOfTotal;
+        double averageCost;
     }
 }
