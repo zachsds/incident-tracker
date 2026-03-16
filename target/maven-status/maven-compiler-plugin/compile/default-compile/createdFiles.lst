@@ -21,6 +21,7 @@ com/sdsweather/ui/IncidentHistoryPage.class
 com/sdsweather/ui/LoginPage.class
 com/sdsweather/ui/ViewUnitsPage$1.class
 com/sdsweather/repository/ComponentCategoryRepository.class
+com/sdsweather/ui/EditIncidentDialog.class
 com/sdsweather/security/PasswordHasher.class
 com/sdsweather/update/UpdateDialog.class
 com/sdsweather/repository/IncidentTemplateRepository$Template.class

@@ -6,9 +6,11 @@ import com.sdsweather.security.SSLConfig;
 import com.sdsweather.security.AuditLogger;
 
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +31,14 @@ public class UnitRepository {
     private static final String BASE = "https://192.168.0.237:3000";
     private static final HttpClient CLIENT = SSLConfig.createHttpClient();
 
+    /**
+     * Creates a new STOCK type unit.
+     * Logs the creation to the audit trail.
+     * 
+     * @param uuid The unique identifier for this unit
+     * @param stock The stock number
+     * @throws Exception If the API call fails
+     */
     public static void createStock(String uuid, String stock) throws Exception {
 
         String json = """
@@ -57,6 +67,14 @@ public class UnitRepository {
         AuditLogger.log("CREATE_UNIT", "UNIT", uuid, "STOCK-" + stock);
     }
 
+    /**
+     * Creates a new DEPLOYED type unit.
+     * Logs the creation to the audit trail.
+     * 
+     * @param uuid The unique identifier for this unit
+     * @param title The deployment title/location
+     * @throws Exception If the API call fails
+     */
     public static void createDeployed(String uuid, String title) throws Exception {
 
         String json = """
@@ -85,6 +103,12 @@ public class UnitRepository {
         AuditLogger.log("CREATE_UNIT", "UNIT", uuid, "DEPLOYED-" + title);
     }
 
+    /**
+     * Retrieves all units from the database.
+     * 
+     * @return List of all units (both STOCK and DEPLOYED)
+     * @throws Exception If the API call fails
+     */
     public static List<Unit> getAll() throws Exception {
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -105,10 +129,12 @@ public class UnitRepository {
 
         if (body == null || body.isBlank()) return list;
 
+        // Parse JSON array manually (simple string parsing approach)
         String[] rows = body.split("\\},\\{");
 
         for (String row : rows) {
 
+            // Clean up JSON formatting characters
             row = row.replace("[", "")
                      .replace("]", "")
                      .replace("{", "")
@@ -116,6 +142,7 @@ public class UnitRepository {
 
             Unit u = new Unit();
 
+            // Parse each field in the row
             for (String field : row.split(",")) {
 
                 String[] kv = field.split(":", 2);
@@ -124,6 +151,7 @@ public class UnitRepository {
                 String key = kv[0].replace("\"", "").trim();
                 String val = kv[1].replace("\"", "").trim();
 
+                // Map JSON fields to Unit object properties
                 switch (key) {
                     case "id" -> u.unitId = val;  // API returns "id" not "unitId"
                     case "unitId" -> u.unitId = val;  // Keep this for backwards compatibility
@@ -141,10 +169,21 @@ public class UnitRepository {
         return list;
     }
 
+    /**
+     * Deletes a unit by its ID.
+     * URL-encodes the unitId to handle spaces and special characters.
+     * Logs the deletion to the audit trail.
+     * 
+     * @param unitId The UUID of the unit to delete
+     * @throws Exception If the API call fails
+     */
     public static void delete(String unitId) throws Exception {
 
+        // URL-encode the unitId to handle spaces and special characters
+        String encodedUnitId = URLEncoder.encode(unitId, StandardCharsets.UTF_8);
+
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE + "/units/" + unitId))
+                .uri(URI.create(BASE + "/units/" + encodedUnitId))
                 .header("Authorization", SessionManager.getAuthHeader())
                 .DELETE()
                 .build();

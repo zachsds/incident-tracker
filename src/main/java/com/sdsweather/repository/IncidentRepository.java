@@ -51,6 +51,7 @@ public class IncidentRepository {
     /**
      * Creates a new incident and returns its generated UUID.
      * Used when component links need to be created immediately after.
+     * Properly escapes JSON strings to handle special characters.
      * 
      * @param unitId The UUID of the unit this incident belongs to
      * @param summary Brief description of the incident
@@ -64,6 +65,10 @@ public class IncidentRepository {
         String incidentId = UUID.randomUUID().toString();
         String reportedAt = Instant.now().toString();
 
+        // Escape JSON strings to handle quotes, backslashes, and other special characters
+        String escapedUnitId = unitId.replace("\\", "\\\\").replace("\"", "\\\"");
+        String escapedSummary = summary.replace("\\", "\\\\").replace("\"", "\\\"");
+
         // Build JSON request body
         String json = """
                 {
@@ -73,7 +78,7 @@ public class IncidentRepository {
                   "severity": "%s",
                   "reportedAt": "%s"
                 }
-                """.formatted(incidentId, unitId, summary, severity, reportedAt);
+                """.formatted(incidentId, escapedUnitId, escapedSummary, severity, reportedAt);
 
         // Send POST request to create incident
         HttpRequest request = HttpRequest.newBuilder()
@@ -161,6 +166,44 @@ public class IncidentRepository {
         }
 
         return list;
+    }
+
+    /**
+     * Updates an existing incident's summary and severity.
+     * Used when editing incidents to save changes to the database.
+     * 
+     * @param incidentId The UUID of the incident to update
+     * @param summary Updated incident description
+     * @param severity Updated severity level (LOW, MEDIUM, HIGH)
+     * @throws Exception If the API call fails
+     */
+    public static void update(String incidentId, String summary, String severity) throws Exception {
+
+        // Build JSON request body with updated fields
+        String json = """
+                {
+                  "summary": "%s",
+                  "severity": "%s"
+                }
+                """.formatted(summary, severity);
+
+        // URL-encode the incidentId to handle special characters
+        String encodedIncidentId = URLEncoder.encode(incidentId, StandardCharsets.UTF_8);
+
+        // Send PUT request to update incident
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE + "/incidents/" + encodedIncidentId))
+                .header("Content-Type", "application/json")
+                .header("Authorization", SessionManager.getAuthHeader())
+                .PUT(HttpRequest.BodyPublishers.ofString(json))
+                .build();
+
+        HttpResponse<String> response =
+                CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() != 200) {
+            throw new RuntimeException("Update incident failed: " + response.body());
+        }
     }
 
     /**
