@@ -25,7 +25,7 @@ import java.util.UUID;
  * All API calls properly URL-encode parameters to handle special characters
  * like spaces in unit IDs and titles.
  *
- * API Base: https://192.168.0.237:3000/incidents
+ * API Base: https://its.zsneed.com/incidents
  *
  * @author Zachary Sneed
  * @version 1.0
@@ -33,7 +33,7 @@ import java.util.UUID;
  */
 public class IncidentRepository {
 
-    private static final String BASE = "https://192.168.0.237:3000";
+    private static final String BASE = com.sdsweather.config.ServerConfig.getBaseUrl();
     private static final HttpClient CLIENT = SSLConfig.createHttpClient();
 
     /**

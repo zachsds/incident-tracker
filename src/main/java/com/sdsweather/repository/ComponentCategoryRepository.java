@@ -17,7 +17,7 @@ import java.util.UUID;
  * Manages the component categories used to organize hardware components.
  * Categories are fetched when populating the incident form and settings page.
  *
- * API Base: https://192.168.0.237:3000/component-categories
+ * API Base: https://its.zsneed.com/component-categories
  *
  * @author Zachary Sneed
  * @version 1.0
@@ -25,7 +25,7 @@ import java.util.UUID;
  */
 public class ComponentCategoryRepository {
 
-    private static final String BASE = "https://192.168.0.237:3000";
+    private static final String BASE = com.sdsweather.config.ServerConfig.getBaseUrl();
     private static final HttpClient CLIENT = SSLConfig.createHttpClient();
 
     public static void create(String categoryName) throws Exception {

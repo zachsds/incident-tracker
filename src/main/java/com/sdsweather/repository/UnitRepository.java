@@ -20,7 +20,7 @@ import java.util.List;
  * Manages both STOCK and DEPLOYED unit records. All mutating operations
  * (create, delete) are logged to the audit trail via AuditLogger.
  *
- * API Base: https://192.168.0.237:3000/units
+ * API Base: https://its.zsneed.com/units
  *
  * @author Zachary Sneed
  * @version 1.0
@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class UnitRepository {
 
-    private static final String BASE = "https://192.168.0.237:3000";
+    private static final String BASE = com.sdsweather.config.ServerConfig.getBaseUrl();
     private static final HttpClient CLIENT = SSLConfig.createHttpClient();
 
     /**

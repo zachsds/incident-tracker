@@ -18,7 +18,7 @@ import java.util.UUID;
  * and deletion. All operations require admin authentication. Used exclusively
  * by the Settings page user management section.
  *
- * API Base: https://192.168.0.237:3000/users
+ * API Base: https://its.zsneed.com/users
  *
  * @author Zachary Sneed
  * @version 1.0
@@ -26,7 +26,7 @@ import java.util.UUID;
  */
 public class UserRepository {
 
-    private static final String BASE = "https://192.168.0.237:3000";
+    private static final String BASE = com.sdsweather.config.ServerConfig.getBaseUrl();
     private static final HttpClient CLIENT = SSLConfig.createHttpClient();
 
     /** Data transfer object representing a user account. */

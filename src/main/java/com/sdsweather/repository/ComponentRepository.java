@@ -19,7 +19,7 @@ import java.util.UUID;
  * components are returned for selection in new incidents, but all components
  * (active and inactive) are available for replacement history tracking.
  *
- * API Base: https://192.168.0.237:3000/components
+ * API Base: https://its.zsneed.com/components
  *
  * @author Zachary Sneed
  * @version 1.0
@@ -27,7 +27,7 @@ import java.util.UUID;
  */
 public class ComponentRepository {
 
-    private static final String BASE = "https://192.168.0.237:3000";
+    private static final String BASE = com.sdsweather.config.ServerConfig.getBaseUrl();
     private static final HttpClient CLIENT = SSLConfig.createHttpClient();
 
     /**

@@ -14,7 +14,7 @@ import java.net.http.HttpResponse;
  * Sends the user's username and details to the server which emails the
  * administrator. An admin then manually resets the password via Settings.
  *
- * API Endpoint: POST https://192.168.0.237:3000/auth/forgot-password
+ * API Endpoint: POST https://its.zsneed.com/auth/forgot-password
  *
  * @author Zachary Sneed
  * @version 1.0
@@ -55,7 +55,7 @@ public class ForgotPasswordDialog extends Dialog<Void> {
                             );
 
                     HttpRequest request = HttpRequest.newBuilder()
-                            .uri(URI.create("https://192.168.0.237:3000/auth/forgot-password"))
+                            .uri(URI.create("https://its.zsneed.com" + "/auth/forgot-password"))
                             .header("Content-Type", "application/json")
                             .POST(HttpRequest.BodyPublishers.ofString(json))
                             .build();

@@ -18,7 +18,7 @@ import java.util.UUID;
  * the incident_components join table. Used when creating incidents and when
  * displaying which components were involved in each incident.
  *
- * API Base: https://192.168.0.237:3000/incident-components
+ * API Base: https://its.zsneed.com/incident-components
  *
  * @author Zachary Sneed
  * @version 1.0
@@ -26,7 +26,7 @@ import java.util.UUID;
  */
 public class IncidentComponentRepository {
 
-    private static final String BASE = "https://192.168.0.237:3000";
+    private static final String BASE = com.sdsweather.config.ServerConfig.getBaseUrl();
     private static final HttpClient CLIENT = SSLConfig.createHttpClient();
 
     /**

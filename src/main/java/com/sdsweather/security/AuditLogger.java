@@ -23,7 +23,7 @@ import java.net.http.HttpResponse;
  */
 public class AuditLogger {
 
-    private static final String BASE = "https://192.168.0.237:3000";
+    private static final String BASE = com.sdsweather.config.ServerConfig.getBaseUrl();
     private static final HttpClient CLIENT = SSLConfig.createHttpClient();
 
     /**

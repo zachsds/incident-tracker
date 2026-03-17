@@ -37,6 +37,7 @@ com/sdsweather/Launcher.class
 com/sdsweather/App.class
 com/sdsweather/ui/AnalysisPage.class
 com/sdsweather/ui/AddUnitPage.class
+com/sdsweather/config/ServerConfig.class
 com/sdsweather/security/SessionManager.class
 com/sdsweather/ui/LandingPage.class
 com/sdsweather/ui/AnalyticsPage$UnitIncidentData.class

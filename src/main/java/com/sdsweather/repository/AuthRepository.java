@@ -14,7 +14,7 @@ import java.net.http.HttpResponse;
  * Posts credentials to /auth/login, parses the role from the response,
  * and initializes a session via SessionManager on success.
  *
- * API Endpoint: POST https://192.168.0.237:3000/auth/login
+ * API Endpoint: POST https://its.zsneed.com/auth/login
  *
  * @author Zachary Sneed
  * @version 1.0
@@ -45,7 +45,7 @@ public class AuthRepository {
                     """.formatted(username, password);
 
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("https://192.168.0.237:3000/auth/login"))
+                    .uri(URI.create("https://its.zsneed.com" + "/auth/login"))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(json))
                     .build();

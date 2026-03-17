@@ -116,109 +116,104 @@ public class AnalyticsPage extends VBox {
         statsGrid.add(avgReplacementCostLabel, 2, 1);
         statsGrid.add(resolutionRateLabel, 3, 1);
 
-        // Component failure ranking table section title
+        // Component failure ranking table
         Label componentRankingTitle = new Label("Component Failure Frequency");
         componentRankingTitle.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
 
-        // Component failure ranking table setup
         TableView<ComponentFailureData> componentTable = new TableView<>();
-        componentTable.setPrefHeight(300);
-        componentTable.setMaxWidth(Double.MAX_VALUE);
+        componentTable.setPrefHeight(400);
 
-        // Rank column
         TableColumn<ComponentFailureData, String> rankCol = new TableColumn<>("#");
         rankCol.setCellValueFactory(data -> 
             new javafx.beans.property.SimpleStringProperty(String.valueOf(data.getValue().rank)));
-        rankCol.setPrefWidth(60);
+        rankCol.setPrefWidth(40);
 
-        // Component name column
         TableColumn<ComponentFailureData, String> componentCol = new TableColumn<>("Component");
         componentCol.setCellValueFactory(data -> 
             new javafx.beans.property.SimpleStringProperty(data.getValue().componentName));
-        componentCol.setPrefWidth(400);
+        componentCol.setPrefWidth(200);
 
-        // Failure count column
         TableColumn<ComponentFailureData, String> failureCountCol = new TableColumn<>("Failures");
         failureCountCol.setCellValueFactory(data -> 
             new javafx.beans.property.SimpleStringProperty(String.valueOf(data.getValue().failureCount)));
-        failureCountCol.setPrefWidth(100);
+        failureCountCol.setPrefWidth(80);
 
-        // Percentage column
-        TableColumn<ComponentFailureData, String> percentCol = new TableColumn<>("% of Total");
+        TableColumn<ComponentFailureData, String> percentCol = new TableColumn<>("% Total");
         percentCol.setCellValueFactory(data -> 
             new javafx.beans.property.SimpleStringProperty(
                 String.format("%.1f%%", data.getValue().percentOfTotal)));
-        percentCol.setPrefWidth(120);
+        percentCol.setPrefWidth(80);
 
         componentTable.getColumns().addAll(rankCol, componentCol, failureCountCol, percentCol);
+        VBox componentBox = new VBox(5, componentRankingTitle, componentTable);
+        HBox.setHgrow(componentBox, Priority.ALWAYS);
 
-        // Replacement frequency table section title
+        // Replacement frequency table
         Label replacementRankingTitle = new Label("Component Replacement Frequency");
         replacementRankingTitle.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
 
-        // Replacement ranking table setup
         TableView<ComponentReplacementData> replacementTable = new TableView<>();
-        replacementTable.setPrefHeight(300);
-        replacementTable.setMaxWidth(Double.MAX_VALUE);
+        replacementTable.setPrefHeight(400);
 
         TableColumn<ComponentReplacementData, String> replComponentCol = new TableColumn<>("Component");
         replComponentCol.setCellValueFactory(data -> 
             new javafx.beans.property.SimpleStringProperty(data.getValue().componentName));
-        replComponentCol.setPrefWidth(400);
+        replComponentCol.setPrefWidth(200);
 
-        TableColumn<ComponentReplacementData, String> replCountCol = new TableColumn<>("Replacements");
+        TableColumn<ComponentReplacementData, String> replCountCol = new TableColumn<>("Count");
         replCountCol.setCellValueFactory(data -> 
             new javafx.beans.property.SimpleStringProperty(String.valueOf(data.getValue().replacementCount)));
-        replCountCol.setPrefWidth(120);
+        replCountCol.setPrefWidth(60);
 
-        TableColumn<ComponentReplacementData, String> replPercentCol = new TableColumn<>("% of Total");
+        TableColumn<ComponentReplacementData, String> replPercentCol = new TableColumn<>("% Total");
         replPercentCol.setCellValueFactory(data -> 
             new javafx.beans.property.SimpleStringProperty(
                 String.format("%.1f%%", data.getValue().percentOfTotal)));
-        replPercentCol.setPrefWidth(120);
+        replPercentCol.setPrefWidth(70);
 
         TableColumn<ComponentReplacementData, String> replCostCol = new TableColumn<>("Avg Cost");
         replCostCol.setCellValueFactory(data -> 
             new javafx.beans.property.SimpleStringProperty(
                 data.getValue().averageCost > 0 ? String.format("$%.2f", data.getValue().averageCost) : "-"));
-        replCostCol.setPrefWidth(100);
+        replCostCol.setPrefWidth(80);
 
         replacementTable.getColumns().addAll(replComponentCol, replCountCol, replPercentCol, replCostCol);
+        VBox replacementBox = new VBox(5, replacementRankingTitle, replacementTable);
+        HBox.setHgrow(replacementBox, Priority.ALWAYS);
 
-        // Units ranking table section title
+        // Units ranking table
         Label unitsTitle = new Label("Units with Most Incidents");
         unitsTitle.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
 
-        // Units ranking table setup
         TableView<UnitIncidentData> unitsTable = new TableView<>();
-        unitsTable.setPrefHeight(250);
-        unitsTable.setMaxWidth(Double.MAX_VALUE);
+        unitsTable.setPrefHeight(400);
 
-        // Unit rank column
         TableColumn<UnitIncidentData, String> unitRankCol = new TableColumn<>("#");
         unitRankCol.setCellValueFactory(data -> 
             new javafx.beans.property.SimpleStringProperty(String.valueOf(data.getValue().rank)));
-        unitRankCol.setPrefWidth(60);
+        unitRankCol.setPrefWidth(40);
 
-        // Unit name column
         TableColumn<UnitIncidentData, String> unitNameCol = new TableColumn<>("Unit");
         unitNameCol.setCellValueFactory(data -> 
             new javafx.beans.property.SimpleStringProperty(data.getValue().unitName));
-        unitNameCol.setPrefWidth(300);
+        unitNameCol.setPrefWidth(200);
 
-        // Incident count column
         TableColumn<UnitIncidentData, String> incidentCountCol = new TableColumn<>("Incidents");
         incidentCountCol.setCellValueFactory(data -> 
             new javafx.beans.property.SimpleStringProperty(String.valueOf(data.getValue().incidentCount)));
-        incidentCountCol.setPrefWidth(100);
+        incidentCountCol.setPrefWidth(80);
 
-        // HIGH severity count column
         TableColumn<UnitIncidentData, String> highCountCol = new TableColumn<>("HIGH");
         highCountCol.setCellValueFactory(data -> 
             new javafx.beans.property.SimpleStringProperty(String.valueOf(data.getValue().highCount)));
-        highCountCol.setPrefWidth(80);
+        highCountCol.setPrefWidth(60);
 
         unitsTable.getColumns().addAll(unitRankCol, unitNameCol, incidentCountCol, highCountCol);
+        VBox unitsBox = new VBox(5, unitsTitle, unitsTable);
+        HBox.setHgrow(unitsBox, Priority.ALWAYS);
+
+        // Horizontal row containing all three tables side-by-side
+        HBox tablesRow = new HBox(15, componentBox, replacementBox, unitsBox);
 
         // Three text sections displayed side-by-side with equal width
         
@@ -641,14 +636,7 @@ public class AnalyticsPage extends VBox {
                 new Separator(),
                 statsGrid,
                 new Separator(),
-                componentRankingTitle,
-                componentTable,
-                new Separator(),
-                replacementRankingTitle,
-                replacementTable,
-                new Separator(),
-                unitsTitle,
-                unitsTable,
+                tablesRow,
                 new Separator(),
                 textSectionsRow,
                 new Separator(),
@@ -663,28 +651,6 @@ public class AnalyticsPage extends VBox {
         getChildren().add(scrollPane);
     }
 
-    /**
-     * Generates a PDF report containing all analytics data including replacement history.
-     * Creates a formatted PDF with tables, statistics, and insights.
-     * 
-     * @param filepath Path where PDF will be saved
-     * @param startDate Report start date
-     * @param endDate Report end date
-     * @param componentData Component failure ranking data
-     * @param unitData Unit incident ranking data
-     * @param replacementData Component replacement ranking data
-     * @param coOccurrenceText Component co-occurrence text
-     * @param insightsText Key insights text
-     * @param totalLabel Total incidents label text
-     * @param highLabel HIGH severity label text
-     * @param mediumLabel MEDIUM severity label text
-     * @param lowLabel LOW severity label text
-     * @param totalReplLabel Total replacements label text
-     * @param totalCostLabel Total cost label text
-     * @param avgCostLabel Average cost label text
-     * @param resRateLabel Resolution rate label text
-     * @throws Exception If PDF generation fails
-     */
     private void generatePdfReport(String filepath, LocalDate startDate, LocalDate endDate,
                                    ObservableList<ComponentFailureData> componentData,
                                    ObservableList<UnitIncidentData> unitData,
@@ -702,13 +668,11 @@ public class AnalyticsPage extends VBox {
         PdfFont boldFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD);
         PdfFont normalFont = PdfFontFactory.createFont(StandardFonts.HELVETICA);
         
-        // Report title
         Paragraph title = new Paragraph("SDS Weather Analytics Report")
             .setFont(boldFont)
             .setFontSize(20);
         document.add(title);
         
-        // Date range
         Paragraph dateRange = new Paragraph("Report Period: " + startDate + " to " + endDate)
             .setFont(normalFont)
             .setFontSize(12);
@@ -716,7 +680,6 @@ public class AnalyticsPage extends VBox {
         
         document.add(new Paragraph("\n"));
         
-        // Summary statistics section - Incidents
         Paragraph summaryTitle = new Paragraph("Incident Summary Statistics")
             .setFont(boldFont)
             .setFontSize(16);
@@ -729,7 +692,6 @@ public class AnalyticsPage extends VBox {
         
         document.add(new Paragraph("\n"));
         
-        // Summary statistics section - Replacements
         Paragraph replacementSummaryTitle = new Paragraph("Replacement Summary Statistics")
             .setFont(boldFont)
             .setFontSize(16);
@@ -742,7 +704,6 @@ public class AnalyticsPage extends VBox {
         
         document.add(new Paragraph("\n"));
         
-        // Component failure frequency table
         Paragraph componentTitle = new Paragraph("Component Failure Frequency")
             .setFont(boldFont)
             .setFontSize(16);
@@ -766,7 +727,6 @@ public class AnalyticsPage extends VBox {
         document.add(componentTable);
         document.add(new Paragraph("\n"));
         
-        // Replacement history section
         Paragraph replacementTitle = new Paragraph("Component Replacement History")
             .setFont(boldFont)
             .setFontSize(16);
@@ -791,7 +751,6 @@ public class AnalyticsPage extends VBox {
         document.add(replacementTable);
         document.add(new Paragraph("\n"));
         
-        // Units with most incidents table
         Paragraph unitsTitle = new Paragraph("Units with Most Incidents")
             .setFont(boldFont)
             .setFontSize(16);
@@ -815,7 +774,6 @@ public class AnalyticsPage extends VBox {
         document.add(unitsTable);
         document.add(new Paragraph("\n"));
         
-        // Component co-occurrence section
         Paragraph coOccurrenceTitle = new Paragraph("Components That Fail Together")
             .setFont(boldFont)
             .setFontSize(16);
@@ -828,7 +786,6 @@ public class AnalyticsPage extends VBox {
         
         document.add(new Paragraph("\n"));
         
-        // Key insights section
         Paragraph insightsTitle = new Paragraph("Key Insights")
             .setFont(boldFont)
             .setFontSize(16);
@@ -842,10 +799,6 @@ public class AnalyticsPage extends VBox {
         document.close();
     }
 
-    /**
-     * Data class for component failure statistics.
-     * Used in the component ranking table.
-     */
     public static class ComponentFailureData {
         int rank;
         String componentName;
@@ -853,10 +806,6 @@ public class AnalyticsPage extends VBox {
         double percentOfTotal;
     }
 
-    /**
-     * Data class for unit incident statistics.
-     * Used in the units ranking table.
-     */
     public static class UnitIncidentData {
         int rank;
         String unitName;
@@ -864,10 +813,6 @@ public class AnalyticsPage extends VBox {
         int highCount;
     }
 
-    /**
-     * Data class for component replacement statistics.
-     * Used in the replacement ranking table.
-     */
     public static class ComponentReplacementData {
         String componentName;
         int replacementCount;
